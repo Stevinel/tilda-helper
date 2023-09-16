@@ -1,0 +1,5 @@
+django==4.2.5
+gunicorn==21.2.0
+psycopg2-binary==2.9.7
+tzdata==2022.2
+python-telegram-bot==20.5

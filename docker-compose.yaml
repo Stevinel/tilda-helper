@@ -1,0 +1,75 @@
+version: "3.3"
+
+services:
+  postgres:
+    image: postgres:14.3-alpine
+    restart: always
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ./Docker/main/Dockerfile
+    restart: always
+    volumes:
+      - ./backend:/usr/src/app
+    environment:
+      - DEBUG=${DEBUG}
+      - DB_PASS=${DB_PASS}
+      - DB_USER=${DB_USER}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT}
+      - DB_HOST=${DB_HOST}
+      - DOMAIN=${DOMAIN}
+      - SECRET_KEY=${SECRET_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  tg_bot:
+    build:
+      context: ./backend
+      dockerfile: ./Docker/bot/Dockerfile
+    restart: always
+    volumes:
+      - ./backend:/usr/src/app
+    environment:
+      - DEBUG=${DEBUG}
+      - DB_PASS=${DB_PASS}
+      - DB_USER=${DB_USER}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT}
+      - DB_HOST=${DB_HOST}
+      - DOMAIN=${DOMAIN}
+      - SECRET_KEY=${SECRET_KEY}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+    depends_on:
+      - backend
+
+  nginx:
+    build: ./nginx
+    restart: always
+    links:
+      - backend:backend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./backend/static:/var/www/static
+
+volumes:
+  postgresql-data:
+  static:
+  media:
