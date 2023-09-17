@@ -23,6 +23,8 @@ services:
     restart: always
     volumes:
       - ./backend:/usr/src/app
+      - static_value:/code/static/
+      - media_value:/code/media/
     environment:
       - DEBUG=${DEBUG}
       - DB_PASS=${DB_PASS}
@@ -68,8 +70,9 @@ services:
       - "443:443"
     volumes:
       - ./backend/static:/var/www/static
+      - ./backend/media:/var/www/media
 
 volumes:
   postgresql-data:
-  static:
-  media:
+  static_value:
+  media_value:

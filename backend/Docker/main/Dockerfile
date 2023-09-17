@@ -27,5 +27,6 @@ RUN chmod +x /usr/src/app/entrypoint.sh
 ADD ../../.. ${WORK_DIR}
 
 RUN chmod -R og+w ${WORK_DIR}/static/
+RUN chmod -R og+w ${WORK_DIR}/media/
 
 ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
