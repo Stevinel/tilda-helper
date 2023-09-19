@@ -26,6 +26,7 @@ class OrderCountFilter(admin.SimpleListFilter):
 class OrderInline(admin.TabularInline):
     model = Order
     extra = 0
+    max_num = 0
     fields = ("number", "payment_amount", "products", "created_at")
     readonly_fields = ("number", "payment_amount", "products", "created_at")
 
@@ -48,7 +49,7 @@ class CustomerAdmin(admin.ModelAdmin):
     inlines = [
         OrderInline,
     ]
-    readonly_fields = ("display_orders_count",)
+    readonly_fields = ("display_orders_count", )
     exclude = (
         "username",
         "is_staff",

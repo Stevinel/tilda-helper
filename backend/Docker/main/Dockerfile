@@ -24,9 +24,6 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 RUN chmod +x /usr/src/app/entrypoint.sh
 
-ADD ../../.. ${WORK_DIR}
-
-RUN chmod -R og+w ${WORK_DIR}/static/
-RUN chmod -R og+w ${WORK_DIR}/media/
+COPY . .
 
 ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]

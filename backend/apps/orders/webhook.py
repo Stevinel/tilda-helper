@@ -8,4 +8,6 @@ from django.views.decorators.csrf import csrf_exempt
 class WebhookView(View):
     def post(self, request, *args, **kwargs):
         print(request.__dict__)
+        print(request.headers)
+        print(request.POST)
         return JsonResponse({})
