@@ -10,8 +10,8 @@ class OrderCountFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ("asc", "Возрастанию"),
-            ("desc", "Убыванию"),
+            ("asc", "По возрастанию"),
+            ("desc", "По убыванию"),
         )
 
     def queryset(self, request, queryset):
