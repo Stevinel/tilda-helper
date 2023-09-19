@@ -11,8 +11,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = os.environ.get("DEBUG", False) == "True"
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", os.environ.get("DOMAIN")]
-CSRF_TRUSTED_ORIGINS = [os.environ.get("CSRF_TRUSTED_DOMAIN")]
+ALLOWED_HOSTS = [x.strip() for x in os.environ["ALLOWED_HOSTS"].split(",")]
+CSRF_TRUSTED_ORIGINS = [x.strip() for x in os.environ["CSRF_TRUSTED_DOMAINS"].split(",")]
 
 # Application definition
 INSTALLED_APPS = [

@@ -34,6 +34,8 @@ services:
       - DB_HOST=${DB_HOST}
       - DOMAIN=${DOMAIN}
       - SECRET_KEY=${SECRET_KEY}
+      - CSRF_TRUSTED_DOMAINS=${CSRF_TRUSTED_DOMAINS}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
     depends_on:
       postgres:
         condition: service_healthy
