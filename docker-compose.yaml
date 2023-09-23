@@ -43,6 +43,8 @@ services:
       - EMAIL=${EMAIL}
       - EMAIL_TOKEN=${EMAIL_TOKEN}
       - CELERY_BROKER=${CELERY_BROKER}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - TARGET_CHAT_ID${TARGET_CHAT_ID}
     depends_on:
       postgres:
         condition: service_healthy
