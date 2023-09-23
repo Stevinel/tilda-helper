@@ -24,6 +24,6 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 RUN chmod +x /usr/src/app/entrypoint.sh
 
-COPY Docker/main .
+COPY . .
 
 ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
