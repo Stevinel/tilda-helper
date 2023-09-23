@@ -23,6 +23,7 @@ COPY entrypoint.sh .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 RUN chmod +x /usr/src/app/entrypoint.sh
+RUN chmod +x /usr/src/app/static/django_admin_inline_paginator
 
 COPY . .
 
