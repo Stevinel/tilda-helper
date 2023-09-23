@@ -4,24 +4,40 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
             name='Pattern',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name='ID'
+                    ),
+                ),
                 ('article', models.PositiveIntegerField(verbose_name='Артикул')),
                 ('name', models.CharField(max_length=256, verbose_name='Название')),
                 ('description', models.CharField(blank=True, verbose_name='Краткое описание')),
                 ('price', models.PositiveIntegerField(verbose_name='Цена')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')),
-                ('pdf_file', models.FileField(blank=True, upload_to='pattern/pdfs/', verbose_name='PDF файл')),
-                ('image', models.ImageField(blank=True, upload_to='pattern/images/', verbose_name='Изображение товара')),
+                (
+                    'created_at',
+                    models.DateTimeField(auto_now_add=True, verbose_name='Дата создания'),
+                ),
+                (
+                    'pdf_file',
+                    models.FileField(
+                        blank=True, upload_to='pattern/pdfs/', verbose_name='PDF файл'
+                    ),
+                ),
+                (
+                    'image',
+                    models.ImageField(
+                        blank=True, upload_to='pattern/images/', verbose_name='Изображение товара'
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'Выкройка',

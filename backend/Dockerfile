@@ -24,8 +24,6 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 RUN chmod +x /usr/src/app/entrypoint.sh
 
-ADD ../../.. ${WORK_DIR}
+COPY Docker/main .
 
-RUN chmod -R og+w ${WORK_DIR}/static/
-
-ENTRYPOINT ["python", "/usr/src/app/apps/tg_bot/main.py"]
+ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]

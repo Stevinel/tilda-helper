@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django_admin_inline_paginator.admin import TabularInlinePaginated
 
 from ..orders.models import Order
 from .models import Customer
@@ -23,10 +24,12 @@ class OrderCountFilter(admin.SimpleListFilter):
         return queryset
 
 
-class OrderInline(admin.TabularInline):
+class OrderInline(TabularInlinePaginated):
     model = Order
     extra = 0
     max_num = 0
+    per_page = 20
+    ordering = ['-id']
     fields = ("number", "payment_amount", "products", "created_at")
     readonly_fields = ("number", "payment_amount", "products", "created_at")
 
@@ -49,7 +52,7 @@ class CustomerAdmin(admin.ModelAdmin):
     inlines = [
         OrderInline,
     ]
-    readonly_fields = ("display_orders_count", )
+    readonly_fields = ("display_orders_count",)
     exclude = (
         "username",
         "is_staff",

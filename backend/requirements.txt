@@ -4,3 +4,8 @@ psycopg2-binary==2.9.7
 tzdata==2022.2
 python-telegram-bot==20.5
 Pillow==10.0.1
+django-admin-inline-paginator==0.4.0
+celery==5.2.7
+redis==4.3.4
+requests==2.31.0
+uvicorn==0.23.2

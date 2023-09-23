@@ -1,7 +1,9 @@
 version: "3.3"
 
+
 services:
   postgres:
+    container_name: postgres
     image: postgres:14.3-alpine
     restart: always
     volumes:
@@ -16,10 +18,12 @@ services:
       timeout: 5s
       retries: 5
 
+
   backend:
+    container_name: backend
     build:
       context: ./backend
-      dockerfile: ./Docker/main/Dockerfile
+      dockerfile: backend/Dockerfile
     restart: always
     volumes:
       - ./backend:/usr/src/app
@@ -34,34 +38,46 @@ services:
       - DB_HOST=${DB_HOST}
       - DOMAIN=${DOMAIN}
       - SECRET_KEY=${SECRET_KEY}
-      - CSRF_TRUSTED_DOMAINS=${CSRF_TRUSTED_DOMAINS}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - API_KEY=${API_KEY}
+      - API_NAME=${API_NAME}
+      - ADMIN_URL=${ADMIN_URL}
+      - EMAIL=${EMAIL}
+      - EMAIL_TOKEN=${EMAIL_TOKEN}
+      - CELERY_BROKER=${CELERY_BROKER}
     depends_on:
       postgres:
         condition: service_healthy
 
-#  tg_bot:
-#    build:
-#      context: ./backend
-#      dockerfile: ./Docker/bot/Dockerfile
-#    restart: always
-#    volumes:
-#      - ./backend:/usr/src/app
-#    environment:
-#      - DEBUG=${DEBUG}
-#      - DB_PASS=${DB_PASS}
-#      - DB_USER=${DB_USER}
-#      - DB_NAME=${DB_NAME}
-#      - DB_PORT=${DB_PORT}
-#      - DB_HOST=${DB_HOST}
-#      - DOMAIN=${DOMAIN}
-#      - SECRET_KEY=${SECRET_KEY}
-#      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
-#    depends_on:
-#      - backend
+
+  redis:
+    image: redis:latest
+    container_name: redis
+
+  celery:
+    container_name: celery
+    build:
+      context: ./backend
+      dockerfile: backend/Dockerfile
+    user: nobody
+    command: ["celery", "-A", "config", "worker"]
+    depends_on:
+      - backend
+      - redis
+      - postgres
+    volumes:
+      - ./backend:/usr/src/app
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_PASSWORD={DB_PASS}
+      - POSTGRES_USER={DB_USER}
+      - POSTGRES_DB={DB_NAME}
+
 
   nginx:
     build: ./nginx
+    container_name: nginx
     restart: always
     links:
       - backend:backend
@@ -73,6 +89,7 @@ services:
     volumes:
       - static_value:/usr/src/app/static
       - media_value:/usr/src/app/media
+
 
 volumes:
   postgresql-data:
