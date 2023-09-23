@@ -21,9 +21,7 @@ services:
 
   backend:
     container_name: backend
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: ./backend
     restart: always
     volumes:
       - ./backend:/usr/src/app
@@ -56,9 +54,7 @@ services:
 
   celery:
     container_name: celery
-    build:
-      context: ./backend
-      dockerfile: backend/Dockerfile
+    build: ./backend
     user: nobody
     command: ["celery", "-A", "config", "worker"]
     depends_on:
