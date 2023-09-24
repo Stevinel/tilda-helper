@@ -45,6 +45,7 @@ services:
       - CELERY_BROKER=${CELERY_BROKER}
       - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
       - TARGET_CHAT_ID=${TARGET_CHAT_ID}
+      - CSRF_TRUSTED_DOMAINS=${CSRF_TRUSTED_DOMAINS}
     depends_on:
       postgres:
         condition: service_healthy
@@ -85,6 +86,7 @@ services:
       - CELERY_BROKER=${CELERY_BROKER}
       - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
       - TARGET_CHAT_ID=${TARGET_CHAT_ID}
+      - CSRF_TRUSTED_DOMAINS=${CSRF_TRUSTED_DOMAINS}
 
 
   nginx:
