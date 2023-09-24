@@ -19,11 +19,7 @@ RUN addgroup --system ${GROUP} &&\
 COPY requirements.txt .
 COPY entrypoint.sh .
 
-
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-
-
+RUN chmod +x ./entrypoint.sh
 COPY . .
-
-ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]

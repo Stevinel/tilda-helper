@@ -49,6 +49,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    command: sh -c ./entrypoint.sh
 
 
   redis:
@@ -87,6 +88,7 @@ services:
       - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
       - TARGET_CHAT_ID=${TARGET_CHAT_ID}
       - CSRF_TRUSTED_DOMAINS=${CSRF_TRUSTED_DOMAINS}
+    command: celery -A config worker -l error
 
 
   nginx:
@@ -109,3 +111,8 @@ volumes:
   postgresql-data:
   static_value:
   media_value:
+
+
+networks:
+  my_network:
+    driver: bridge
