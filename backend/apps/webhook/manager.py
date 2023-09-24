@@ -41,4 +41,5 @@ class WebhookDataManager:
         order.products.set(products)
         order.save()
 
-        send_mail(customer, products)
+        data = {'customer': customer.id, 'products': [p.article for p in products]}
+        send_mail.delay(data)

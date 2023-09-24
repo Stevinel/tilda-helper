@@ -13,7 +13,7 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_DB=${DB_NAME}
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -44,7 +44,7 @@ services:
       - EMAIL_TOKEN=${EMAIL_TOKEN}
       - CELERY_BROKER=${CELERY_BROKER}
       - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
-      - TARGET_CHAT_ID${TARGET_CHAT_ID}
+      - TARGET_CHAT_ID=${TARGET_CHAT_ID}
     depends_on:
       postgres:
         condition: service_healthy
@@ -54,23 +54,37 @@ services:
     image: redis:latest
     container_name: redis
 
+
   celery:
     container_name: celery
     build: ./backend
     user: nobody
-    command: ["celery", "-A", "config", "worker"]
     depends_on:
       - backend
       - redis
       - postgres
     volumes:
       - ./backend:/usr/src/app
-    env_file:
-      - .env
+      - static_value:/usr/src/app/static/
+      - media_value:/usr/src/app/media/
     environment:
-      - POSTGRES_PASSWORD={DB_PASS}
-      - POSTGRES_USER={DB_USER}
-      - POSTGRES_DB={DB_NAME}
+      - DEBUG=${DEBUG}
+      - DB_PASS=${DB_PASS}
+      - DB_USER=${DB_USER}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT}
+      - DB_HOST=${DB_HOST}
+      - DOMAIN=${DOMAIN}
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - API_KEY=${API_KEY}
+      - API_NAME=${API_NAME}
+      - ADMIN_URL=${ADMIN_URL}
+      - EMAIL=${EMAIL}
+      - EMAIL_TOKEN=${EMAIL_TOKEN}
+      - CELERY_BROKER=${CELERY_BROKER}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - TARGET_CHAT_ID=${TARGET_CHAT_ID}
 
 
   nginx:

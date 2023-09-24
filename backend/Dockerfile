@@ -22,8 +22,7 @@ COPY entrypoint.sh .
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-RUN chmod +x /usr/src/app/entrypoint.sh
-RUN chmod -R og+w ${WORK_DIR}
+
 
 COPY . .
 
