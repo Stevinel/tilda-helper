@@ -162,7 +162,7 @@ async def main() -> None:
             app=get_asgi_application(),
             port=PORT,
             use_colors=False,
-            host="127.0.0.1",
+            host=os.getenv('DOMAIN'),
         )
     )
 
