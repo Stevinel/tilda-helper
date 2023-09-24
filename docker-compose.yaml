@@ -49,7 +49,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    command: sh -c ./entrypoint.sh
+    command: sh -c /tmp/entrypoint.sh
 
 
   redis:

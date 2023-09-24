@@ -17,9 +17,10 @@ RUN addgroup --system ${GROUP} &&\
     chown -R ${USER}:${GROUP} ${WORK_DIR}/..
 
 COPY requirements.txt .
-COPY entrypoint.sh .
+COPY entrypoint.sh /tmp
+RUN chmod +x /tmp/entrypoint.sh
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-RUN chmod +x /usr/src/app/entrypoint.sh
+
 COPY . .
