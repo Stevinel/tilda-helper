@@ -1,10 +1,10 @@
-from django.contrib.auth.models import AbstractUser
+from django.db import models
 from django.db.models import CharField, EmailField
 
 from .managers import CustomerManager
 
 
-class Customer(AbstractUser):
+class Customer(models.Model):
     """Модель покупателя"""
 
     objects = CustomerManager()
@@ -14,6 +14,8 @@ class Customer(AbstractUser):
     last_name = CharField("Фамилия", max_length=150, blank=True)
     patronymic_name = CharField("Отчество", max_length=150, blank=True)
     phone_number = CharField("Телефон", max_length=20, blank=True)
+
+    REQUIRED_FIELDS = 'email'
 
     class Meta:
         verbose_name = "Покупатель"
