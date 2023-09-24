@@ -9,6 +9,8 @@ from .tasks import send_mail
 
 
 class WebhookDataManager:
+    """Модель отвечающая за данные, полученные на вебхуке"""
+
     def __init__(self, customer, order, products):
         self.customer = customer['customer']
         self.order = order['order']

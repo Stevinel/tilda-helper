@@ -12,16 +12,18 @@ from celery import shared_task
 from django.template.loader import render_to_string
 
 
-@shared_task(bind=True, retry_kwargs={'max_retries': 10})
+@shared_task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 10, 'countdown': 5})
 def send_mail(self, data):
     """Отправка файлов по товарам из заказа"""
-    sender = os.getenv('EMAIL')
-    to_addr = 'steviknel@gmail.com'
-    email_password = os.getenv('EMAIL_TOKEN')
-    message = MIMEMultipart()
+
     client = Customer.objects.filter(id=data['customer']).first()
     products = Pattern.objects.filter(article__in=data['products'])
 
+    sender = os.getenv('EMAIL')
+    to_addr = client.email
+    email_password = os.getenv('EMAIL_TOKEN')
+
+    message = MIMEMultipart()
     message['From'] = "{} <{}>".format("Hush Time", sender)
     message['To'] = to_addr
     message['Subject'] = 'Выкройки'
