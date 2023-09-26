@@ -22,13 +22,16 @@ class WebhookDataManager:
         self.save_order(customer)
 
     def save_customer(self):
-        customer, _ = Customer.objects.get_or_create(
-            first_name=self.customer['first_name'],
-            last_name=self.customer['last_name'],
-            patronymic_name=self.customer['patronymic_name'],
-            email=self.customer['email'],
-            phone_number=self.customer['phone_number'],
-        )
+        try:
+            Customer.objects.get(email=self.customer['email'],)
+        except Customer.DoesNotExist:
+            customer = Customer.objects.create(
+                first_name=self.customer['first_name'],
+                last_name=self.customer['last_name'],
+                patronymic_name=self.customer['patronymic_name'],
+                email=self.customer['email'],
+                phone_number=self.customer['phone_number'],
+            )
         return customer
 
     def save_order(self, customer):
