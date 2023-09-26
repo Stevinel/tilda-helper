@@ -22,15 +22,12 @@ def access_verification(view_func):
         try:
             data = json.loads(request.body.decode('unicode_escape'))
         except json.JSONDecodeError:
-            logging.INFO('Не удалось декодировать json')
-            return JsonResponse({'error': "Invalid JSON data", 'data': data})
+            return JsonResponse({'error': "Invalid JSON data"})
 
         if API_NAME not in data:
-            logging.INFO('Неверные данные для доступа')
             return JsonResponse({'error': "Access denied"})
 
         if data[API_NAME] != API_KEY:
-            logging.INFO('Неверные данные для доступа')
             return JsonResponse({'error': "Access denied"})
 
         return view_func(self, request, data, *args, **kwargs)
@@ -45,6 +42,8 @@ class WebhookView(View):
     @access_verification
     def post(self, request, data, *args, **kwargs):
         serializer = WebhookSerializer()
+        if not "Email" in data:
+            return JsonResponse({'error': "Invalid data"})
         customer, order, products = serializer.serialize(data)
         manager = WebhookDataManager(customer, order, products)
         manager.save_data()
