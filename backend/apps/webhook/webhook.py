@@ -42,6 +42,7 @@ class WebhookView(View):
     @access_verification
     def post(self, request, data, *args, **kwargs):
         serializer = WebhookSerializer()
+        print(data, 'data')
         if not "Email" in data:
             return JsonResponse({'error': "Invalid data"})
         customer, order, products = serializer.serialize(data)
