@@ -23,7 +23,7 @@ class WebhookDataManager:
 
     def save_customer(self):
         try:
-            Customer.objects.get(email=self.customer['email'],)
+            customer = Customer.objects.get(email=self.customer['email'])
         except Customer.DoesNotExist:
             customer = Customer.objects.create(
                 first_name=self.customer['first_name'],
