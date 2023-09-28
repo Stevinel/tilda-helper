@@ -17,8 +17,13 @@ RUN addgroup --system ${GROUP} &&\
     chown -R ${USER}:${GROUP} ${WORK_DIR}/..
 
 COPY requirements.txt .
+
 COPY entrypoint.sh /tmp
 RUN chmod +x /tmp/entrypoint.sh
+
+COPY hush.log /usr/src/app/hush.log
+RUN chmod +w /usr/src/app/hush.log
+
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt

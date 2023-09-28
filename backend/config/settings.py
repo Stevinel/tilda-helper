@@ -133,7 +133,7 @@ sentry_sdk.init(
 
 logging.basicConfig(
     level=logging.DEBUG,
-    filename="hush.log",
+    filename="/tmp/hush.log",
     filemode="w",
     format="%(asctime)s %(levelname)s %(message)s",
 )
