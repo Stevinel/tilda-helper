@@ -4,15 +4,13 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Customer',
+            name="Customer",
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('email', models.EmailField(max_length=254, unique=True, verbose_name='Почта')),
@@ -22,8 +20,8 @@ class Migration(migrations.Migration):
                 ('phone_number', models.CharField(blank=True, max_length=20, verbose_name='Телефон')),
             ],
             options={
-                'verbose_name': 'Покупатель',
-                'verbose_name_plural': 'Покупатели',
+                "verbose_name": "Покупатель",
+                "verbose_name_plural": "Покупатели",
             },
         ),
     ]

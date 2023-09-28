@@ -22,6 +22,7 @@ class OrderAdmin(admin.ModelAdmin):
         "number",
         "payment_amount",
         "customer",
+        "created_at",
     )
     search_fields = (
         "number",

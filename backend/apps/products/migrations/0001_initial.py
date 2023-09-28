@@ -4,15 +4,13 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Pattern',
+            name="Pattern",
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('article', models.PositiveIntegerField(db_index=True, verbose_name='Артикул')),
@@ -24,8 +22,8 @@ class Migration(migrations.Migration):
                 ('image', models.ImageField(blank=True, upload_to='pattern/images/', verbose_name='Изображение товара')),
             ],
             options={
-                'verbose_name': 'Выкройка',
-                'verbose_name_plural': 'Выкройки',
+                "verbose_name": "Выкройка",
+                "verbose_name_plural": "Выкройки",
             },
         ),
     ]

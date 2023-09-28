@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 from functools import wraps
 
@@ -9,20 +8,21 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from sentry_sdk import capture_exception
 
-API_NAME = os.getenv('API_NAME')
-API_KEY = os.getenv('API_KEY')
+API_NAME = os.getenv("API_NAME")
+API_KEY = os.getenv("API_KEY")
 
 
 def access_verification(view_func):
-    """Декоратор проверки доступа. Проверяет доступен ключ доступа и его значение"""
+    """Декоратор проверки доступа. Проверяет доступен ли ключ доступа и его значение"""
 
     @wraps(view_func)
     def _wrapped_view(self, request, *args, **kwargs):
         try:
-            data = json.loads(request.body.decode('unicode_escape'))
+            data = json.loads(request.body.decode("unicode_escape"))
         except json.JSONDecodeError:
-            return JsonResponse({'error': "Invalid JSON data"})
+            return JsonResponse({"error": "Invalid JSON data"})
 
         if API_NAME not in data:
             return JsonResponse({'error': "Access denied"})
@@ -42,10 +42,12 @@ class WebhookView(View):
     @access_verification
     def post(self, request, data, *args, **kwargs):
         serializer = WebhookSerializer()
-        print(data, 'data')
-        if not "Email" in data:
-            return JsonResponse({'error': "Invalid data"})
-        customer, order, products = serializer.serialize(data)
+        try:
+            customer, order, products = serializer.serialize(data)
+        except Exception as e:
+            capture_exception(e)
+            return JsonResponse({"error": "Data serialization error"})
+
         manager = WebhookDataManager(customer, order, products)
         manager.save_data()
         return JsonResponse({})

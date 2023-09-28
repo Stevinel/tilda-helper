@@ -2,7 +2,9 @@ import logging
 import os
 from pathlib import Path
 
+import sentry_sdk
 from celery import Celery
+from sentry_sdk.integrations.django import DjangoIntegration
 
 logging.getLogger("child").propagate = False
 
@@ -22,7 +24,7 @@ INSTALLED_APPS = [
     "apps.products",
     "apps.customers",
     "apps.orders",
-    'django_admin_inline_paginator',
+    "django_admin_inline_paginator",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -107,10 +109,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 # Default primary key field type
@@ -119,3 +121,22 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_BROKER", "redis://redis:6379/0")
+
+
+sentry_sdk.init(
+    dsn=os.getenv("SENTRY_DNS"),
+    traces_sample_rate=1.0,
+    profiles_sample_rate=1.0,
+    integrations=[DjangoIntegration()],
+)
+
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename="hush.log",
+    filemode="w",
+    format="%(asctime)s %(levelname)s %(message)s",
+)
+console = logging.StreamHandler()
+console.setLevel(logging.DEBUG)
+logging.getLogger("").addHandler(console)

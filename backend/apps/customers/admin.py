@@ -29,7 +29,7 @@ class OrderInline(TabularInlinePaginated):
     extra = 0
     max_num = 0
     per_page = 20
-    ordering = ['-id']
+    ordering = ["-id"]
     fields = ("number", "payment_amount", "products", "created_at")
     readonly_fields = ("number", "payment_amount", "products", "created_at")
 

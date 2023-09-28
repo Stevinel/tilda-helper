@@ -15,7 +15,7 @@ class Customer(models.Model):
     patronymic_name = CharField("Отчество", max_length=150, blank=True)
     phone_number = CharField("Телефон", max_length=20, blank=True)
 
-    REQUIRED_FIELDS = 'email'
+    REQUIRED_FIELDS = "email"
 
     class Meta:
         verbose_name = "Покупатель"

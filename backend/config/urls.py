@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.urls import include, path
 
-ADMIN_URL = os.getenv('ADMIN_URL')
+ADMIN_URL = os.getenv("ADMIN_URL")
 
 urlpatterns = [
     path(ADMIN_URL, admin.site.urls),
