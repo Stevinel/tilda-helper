@@ -7,14 +7,19 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from apps.customers.models import Customer
+from apps.orders.utils import MessageSender
 from apps.products.models import Pattern
 from celery import shared_task
 from django.template.loader import render_to_string
+from sentry_sdk import capture_message
 
 
-@shared_task(
-    bind=True, autoretry_for=(Exception,), retry_kwargs={"max_retries": 10, "countdown": 5}
-)
+API_NAME = os.getenv("API_NAME")
+API_KEY = os.getenv("API_KEY")
+
+
+
+@shared_task(bind=True, autoretry_for=(Exception,), retry_backoff=5, retry_kwargs={'max_retries': 5})
 def send_mail(self, data):
     """Отправка файлов по товарам из заказа"""
 
@@ -33,14 +38,22 @@ def send_mail(self, data):
     message.attach(MIMEText(html, "html"))
 
     for pattern in products:
-        pdf_attachment = MIMEApplication(pattern.pdf_file.read(), _subtype="pdf")
-        pdf_attachment.add_header(
-            "content-disposition", "attachment", filename=f"{pattern.name}.pdf"
-        )
-        message.attach(pdf_attachment)
+        if pattern.pdf_file:
+            pdf_attachment = MIMEApplication(pattern.pdf_file.read(), _subtype="pdf")
+            pdf_attachment.add_header(
+                "content-disposition", "attachment", filename=f"{pattern.name}.pdf"
+            )
+            message.attach(pdf_attachment)
+        else:
+            MessageSender().send_error_message(
+                f"Не добавлен pdf file в товар: {pattern.name} \n"
+                f"Заказ не будет доставлен на почту {client.email}"
+            )
+            return capture_message(f"Не добавлен pdf file в товар: {pattern.name}")
 
     server = smtplib.SMTP_SSL("smtp.mail.ru", 465)
     server.login(sender, email_password)
     server.sendmail(sender, to_addr, message.as_string())
     server.quit()
-    # TODO request to tg bot
+
+    MessageSender().send_success_message(f"Заказ успешно отправлен на почту: {client.email}")

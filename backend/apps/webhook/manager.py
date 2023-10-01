@@ -1,11 +1,8 @@
-import logging
-
 from django.db import transaction
 
 from ..customers.models import Customer
 from ..orders.models import Order
 from ..products.models import Pattern
-from .tasks import send_mail
 
 
 class WebhookDataManager:
@@ -51,9 +48,3 @@ class WebhookDataManager:
         order.save()
         order.products.set(products)
         order.save()
-
-        data = {"customer": customer.id, "products": [p.article for p in products]}
-
-        logging.info(f"Отправляю данные на почту: {customer.email}")
-
-        send_mail.delay(data)
