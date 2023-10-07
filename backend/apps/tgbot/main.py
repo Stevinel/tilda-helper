@@ -94,6 +94,7 @@ def get_order_data(message):
     manager.save_data()
     bot.reply_to(message, "Заказ принят")
 
+
 if __name__ == "__main__":
     if not settings.DEBUG:
         wake_up_msg()
