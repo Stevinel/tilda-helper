@@ -56,6 +56,9 @@ def wake_up_msg():
 def get_containers_status(message):
     """Проверка статусов контейнеров"""
 
+    if not str(message.chat.id) in ALLOWED_CHATS:
+        return
+
     if not settings.DEBUG:
         import docker
         client = docker.from_env()
@@ -77,17 +80,19 @@ def get_containers_status(message):
 def get_order_data(message):
     """Получение заказа в тг бота, для отправки в ручном режиме"""
 
-    if str(message.chat.id) in ALLOWED_CHATS:
-        serializer = TgSerializer()
-        try:
-            customer, order, products = serializer.serialize(message)
-        except Exception as e:
-            capture_exception(e)
-            return JsonResponse({"error": "Data serialization error"})
+    if not str(message.chat.id) in ALLOWED_CHATS:
+        return
 
-        manager = WebhookDataManager(customer, order, products)
-        manager.save_data()
-        bot.reply_to(message, "Заказ принят")
+    serializer = TgSerializer()
+    try:
+        customer, order, products = serializer.serialize(message)
+    except Exception as e:
+        capture_exception(e)
+        return JsonResponse({"error": "Data serialization error"})
+
+    manager = WebhookDataManager(customer, order, products)
+    manager.save_data()
+    bot.reply_to(message, "Заказ принят")
 
 if __name__ == "__main__":
     if not settings.DEBUG:
