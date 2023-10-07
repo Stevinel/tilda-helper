@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 
 import sentry_sdk
-from celery import Celery
 from sentry_sdk.integrations.django import DjangoIntegration
 
 logging.getLogger("child").propagate = False

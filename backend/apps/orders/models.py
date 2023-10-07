@@ -1,8 +1,6 @@
 from django.db import models
 from django.db.models import PositiveIntegerField
 
-from ..customers.models import Customer
-
 
 class Order(models.Model):
     """Модель заказа"""

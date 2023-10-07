@@ -10,19 +10,20 @@ from apps.customers.models import Customer
 from apps.orders.utils import MessageSender
 from apps.products.models import Pattern
 from celery import shared_task
+from celery.utils.log import get_task_logger
 from django.template.loader import render_to_string
 from sentry_sdk import capture_message
+
+logger = get_task_logger(__name__)
 
 
 API_NAME = os.getenv("API_NAME")
 API_KEY = os.getenv("API_KEY")
 
 
-
 @shared_task(bind=True, autoretry_for=(Exception,), retry_backoff=5, retry_kwargs={'max_retries': 5})
 def send_mail(self, data):
     """Отправка файлов по товарам из заказа"""
-
     client = Customer.objects.filter(id=data["customer"]).first()
     products = Pattern.objects.filter(article__in=data["products"])
 
