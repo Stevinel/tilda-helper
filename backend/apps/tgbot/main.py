@@ -8,6 +8,7 @@ django.setup()
 
 import telebot
 from apps.webhook.manager import WebhookDataManager
+from django.conf import settings
 from django.http import JsonResponse
 from sentry_sdk import capture_exception
 
@@ -45,11 +46,11 @@ def wake_up_msg():
 def get_containers_status(message):
     """Проверка статусов контейнеров"""
 
-    if not os.getenv("DEBUG", "True"):
+    if not settings.DEBUG:
         import docker
         client = docker.from_env()
     else:
-        bot.reply_to(message, "Выключите debug режим")
+        return bot.reply_to(message, "Выключите debug режим")
 
     container_statuses = get_container_statuses(client)
 
