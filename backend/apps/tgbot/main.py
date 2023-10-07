@@ -24,16 +24,26 @@ bot = telebot.TeleBot(TELEGRAM_TOKEN)
 def get_container_statuses(client):
     """Получение состояния контейнеров"""
 
+    container_names = {
+        'name': [
+            'tgbot',
+            'celery',
+            'nginx',
+            'backend',
+            'postgres',
+            'redis'
+        ]
+    }
+    containers = client.containers.list(filters=container_names)
     container_statuses = []
-    containers = client.containers.list(all=True)
     for container in containers:
         container_status = {
-            "Name": container.name,
-            "Status": container.status,
+            "name": container.name,
+            "status": container.status,
         }
         container_statuses.append(container_status)
 
-    return
+    return container_statuses
 
 
 def wake_up_msg():
@@ -46,17 +56,21 @@ def wake_up_msg():
 def get_containers_status(message):
     """Проверка статусов контейнеров"""
 
-    if not settings.DEBUG:
+    if settings.DEBUG:
         import docker
         client = docker.from_env()
     else:
         return bot.reply_to(message, "Выключите debug режим")
 
     container_statuses = get_container_statuses(client)
-
-    for status in container_statuses:
-        txt = f"Container Name: {status['Name']}\nStatus: {status['Status']}"
-        bot.reply_to(message, txt)
+    msg = ''
+    if container_statuses:
+        for container in container_statuses:
+            msg += f"Контейнер: {container['name']} - {container['status']}\n"
+    if msg:
+        bot.reply_to(message, msg)
+    else:
+        bot.reply_to(message, "Не удалось получить статусы контейнеров")
 
 
 @bot.message_handler(func=lambda message: True)
@@ -76,5 +90,7 @@ def get_order_data(message):
         bot.reply_to(message, "Заказ принят")
 
 if __name__ == "__main__":
-    wake_up_msg()
+    if not settings.DEBUG:
+        wake_up_msg()
+
     bot.infinity_polling()
