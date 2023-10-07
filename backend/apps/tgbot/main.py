@@ -56,7 +56,7 @@ def wake_up_msg():
 def get_containers_status(message):
     """Проверка статусов контейнеров"""
 
-    if settings.DEBUG:
+    if not settings.DEBUG:
         import docker
         client = docker.from_env()
     else:
