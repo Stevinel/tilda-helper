@@ -32,7 +32,7 @@ def get_container_statuses(client):
             'backend',
             'postgres',
             'redis',
-            'pgbackups',
+            'backup',
         ]
     }
     containers = client.containers.list(filters=container_names)
