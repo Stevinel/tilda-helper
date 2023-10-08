@@ -19,6 +19,28 @@ services:
       retries: 5
 
 
+  pgbackups:
+    container_name: backup
+    image: prodrigestivill/postgres-backup-local
+    restart: always
+    volumes:
+      - ./backup:/backups
+    links:
+      - postgres:postgres
+    depends_on:
+      - postgres
+    environment:
+      - POSTGRES_HOST=${DB_HOST}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_EXTRA_OPTS=-Z9 -E UTF-8 --schema=public --blobs
+      - SCHEDULE=@every 0h1m00s # for test
+      - BACKUP_KEEP_DAYS=2
+      - BACKUP_KEEP_WEEKS=2
+      - BACKUP_KEEP_MONTHS=2
+
+
   backend:
     container_name: backend
     build: ./backend
