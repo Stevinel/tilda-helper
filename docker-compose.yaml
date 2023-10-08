@@ -35,7 +35,7 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASS}
       - POSTGRES_EXTRA_OPTS=-Z9 -E UTF-8 --schema=public --blobs
-      - SCHEDULE=@every 0h1m00s # for test
+      - SCHEDULE=@weekly
       - BACKUP_KEEP_DAYS=2
       - BACKUP_KEEP_WEEKS=2
       - BACKUP_KEEP_MONTHS=2
