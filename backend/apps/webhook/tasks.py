@@ -35,7 +35,9 @@ def send_mail(self, data):
     message["From"] = "{} <{}>".format("Hush Time", sender)
     message["To"] = to_addr
     message["Subject"] = "Выкройки"
-    html = render_to_string("email.html", context={"client_name": client.first_name})
+
+    full_name = " ".join([client.first_name, client.patronymic_name, client.last_name]).rstrip()
+    html = render_to_string("email.html", context={"client": full_name})
     message.attach(MIMEText(html, "html"))
 
     for pattern in products:
@@ -54,7 +56,15 @@ def send_mail(self, data):
 
     server = smtplib.SMTP_SSL("smtp.mail.ru", 465)
     server.login(sender, email_password)
-    server.sendmail(sender, to_addr, message.as_string())
-    server.quit()
 
+    try:
+        resp = server.sendmail(sender, to_addr, message.as_string())
+        logger.info(resp)
+        server.quit()
+    except Exception as e:
+        MessageSender().send_error_message(
+            f"Ошибка отправки письма: {e.smtp_error.decode('utf-8')}\n"
+            f"Заказ не будет доставлен на почту {client.email}"
+        )
+        return capture_message(f"Mail error: {e}")
     MessageSender().send_success_message(f"Заказ успешно отправлен на почту: {client.email}")

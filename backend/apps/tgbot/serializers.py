@@ -49,7 +49,7 @@ class TgSerializer:
             "customer": {
                 "first_name": first_name if first_name else "",
                 "last_name":last_name if last_name else "",
-                "patronymic_name": patronymic_name if patronymic_name == 3 else "",
+                "patronymic_name": patronymic_name if patronymic_name else "",
                 "email": email,
                 "phone_number": phone_number,
             }
