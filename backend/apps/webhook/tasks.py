@@ -58,12 +58,12 @@ def send_mail(self, data):
     server.login(sender, email_password)
 
     try:
-        resp = server.sendmail(sender, to_addr, message.as_string())
-        logger.info(resp)
+        server.sendmail(sender, to_addr, message.as_string())
         server.quit()
     except Exception as e:
+        error = e.smtp_error.decode('utf-8') if hasattr(e, 'smtp_error') else e
         MessageSender().send_error_message(
-            f"Ошибка отправки письма: {e.smtp_error.decode('utf-8')}\n"
+            f"Ошибка отправки письма: {error}\n"
             f"Заказ не будет доставлен на почту {client.email}"
         )
         return capture_message(f"Mail error: {e}")
