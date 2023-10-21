@@ -7,7 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from apps.customers.models import Customer
-from apps.orders.utils import MessageSender
+from apps.utils import MessageSender
 from apps.products.models import Pattern
 from celery import shared_task
 from celery.utils.log import get_task_logger

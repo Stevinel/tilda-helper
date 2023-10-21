@@ -18,7 +18,7 @@ class TgSerializer:
         if order_match:
             order_number = order_match.group(1)
 
-            article_matches = re.findall(r'\d{6},', message.text)
+            article_matches = re.findall(r'\d{6},', message.text) # only 6 numbers article
             articles = [article.rstrip(',') for article in article_matches]
 
             payment_match = re.search(r'Payment Amount: (\d+) RUB', message.text)

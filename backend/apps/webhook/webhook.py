@@ -2,6 +2,7 @@ import json
 import os
 from functools import wraps
 
+from apps.utils import MessageSender
 from apps.webhook.manager import WebhookDataManager
 from apps.webhook.serializers import WebhookSerializer
 from django.http import JsonResponse
@@ -24,10 +25,7 @@ def access_verification(view_func):
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"})
 
-        if API_NAME not in data:
-            return JsonResponse({'error': "Access denied"})
-
-        if data[API_NAME] != API_KEY:
+        if API_NAME not in data or data[API_NAME] != API_KEY:
             return JsonResponse({'error': "Access denied"})
 
         return view_func(self, request, data, *args, **kwargs)
@@ -46,6 +44,7 @@ class WebhookView(View):
             customer, order, products = serializer.serialize(data)
         except Exception as e:
             capture_exception(e)
+            MessageSender().send_error_message(f"Ошибка получения данных через webhook: {e}")
             return JsonResponse({"error": "Data serialization error"})
 
         manager = WebhookDataManager(customer, order, products)

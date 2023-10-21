@@ -17,11 +17,9 @@ def access_verification(view_func):
 
     @wraps(view_func)
     def _wrapped_view(data):
-        if API_NAME not in data:
+        if API_NAME not in data or data[API_NAME] != API_KEY:
             return JSONResponse({"error": "Access denied"})
 
-        if data[API_NAME] != API_KEY:
-            return JSONResponse({"error": "Access denied"})
         return view_func(data)
 
     return _wrapped_view

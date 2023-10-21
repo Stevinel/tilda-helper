@@ -21,7 +21,7 @@ ALLOWED_CHATS = [x.strip() for x in os.getenv("ALLOWED_CHATS").split(",")]
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
 
-def get_container_statuses(client):
+def get_container_data(client):
     """Получение состояния контейнеров"""
 
     container_names = {
@@ -36,15 +36,15 @@ def get_container_statuses(client):
         ]
     }
     containers = client.containers.list(filters=container_names)
-    container_statuses = []
+    container_data = []
     for container in containers:
-        container_status = {
+        container_info = {
             "name": container.name,
             "status": container.status,
         }
-        container_statuses.append(container_status)
+        container_data.append(container_info)
 
-    return container_statuses
+    return container_data
 
 
 def wake_up_msg():
@@ -66,7 +66,7 @@ def get_containers_status(message):
     else:
         return bot.reply_to(message, "Выключите debug режим")
 
-    container_statuses = get_container_statuses(client)
+    container_statuses = get_container_data(client)
     msg = ''
     if container_statuses:
         for container in container_statuses:
@@ -89,6 +89,7 @@ def get_order_data(message):
         customer, order, products = serializer.serialize(message)
     except Exception as e:
         capture_exception(e)
+        bot.reply_to(message, "Ошибка данных")
         return JsonResponse({"error": "Data serialization error"})
 
     manager = WebhookDataManager(customer, order, products)

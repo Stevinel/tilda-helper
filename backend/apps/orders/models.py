@@ -8,7 +8,9 @@ class Order(models.Model):
     number = PositiveIntegerField("Номер заказа", blank=False)
     payment_amount = PositiveIntegerField("Сумма заказа", blank=False)
     products = models.ManyToManyField(
-        "products.Pattern", related_name="orders", verbose_name="Товары"
+        "products.Pattern",
+        related_name="orders",
+        verbose_name="Товары",
     )
     customer = models.ForeignKey(
         "customers.Customer",
