@@ -24,6 +24,7 @@ API_KEY = os.getenv("API_KEY")
 @shared_task(bind=True, autoretry_for=(Exception,), retry_backoff=5, retry_kwargs={'max_retries': 5})
 def send_mail(self, data):
     """Отправка файлов по товарам из заказа"""
+
     client = Customer.objects.filter(id=data["customer"]).first()
     products = Pattern.objects.filter(article__in=data["products"])
 

@@ -1,22 +1,19 @@
 from apps.orders.models import Order
 from apps.utils import MessageSender
 from apps.mail_sender.tasks import send_mail
-from django.db.models.signals import post_save
+from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 
 
-@receiver(post_save, sender=Order)
-def send_order_to_email(sender, instance, created, **kwargs):
+@receiver(m2m_changed, sender=Order.products.through)
+def send_order_to_email(sender, instance, action, pk_set=None, **kwargs):
     """Вызов регистрации или обновления клиента в crm"""
 
-    products_exists = instance.products.all()
-
-    if products_exists:
+    if action == 'post_add':
         data = {
             "customer": instance.customer.id,
-            "products": [p.article for p in products_exists],
+            "products": [p.article for p in instance.products.all()],
         }
-
         message = (
             f"Успешно получен заказ: {instance.number} \n"
             f"Заказ от клиента: {instance.customer.last_name} {instance.customer.first_name} "

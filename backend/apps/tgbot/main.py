@@ -1,4 +1,5 @@
 import os
+from functools import wraps
 
 import django
 
@@ -7,7 +8,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
 
 import telebot
-from apps.webhook.manager import WebhookDataManager
+from apps.webhook.manager import DataManager
 from django.conf import settings
 from django.http import JsonResponse
 from sentry_sdk import capture_exception
@@ -19,6 +20,19 @@ TARGET_CHAT_ID = os.getenv("TARGET_CHAT_ID")
 ALLOWED_CHATS = [x.strip() for x in os.getenv("ALLOWED_CHATS").split(",")]
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
+
+
+def access_verification(view_func):
+    """Декоратор проверки доступа к боту"""
+
+    @wraps(view_func)
+    def _wrapped_view(data):
+        if not str(data.chat.id) in ALLOWED_CHATS:
+            return
+
+        return view_func(data)
+
+    return _wrapped_view
 
 
 def get_container_data(client):
@@ -54,11 +68,9 @@ def wake_up_msg():
 
 
 @bot.message_handler(commands=['status'])
+@access_verification
 def get_containers_status(message):
     """Проверка статусов контейнеров"""
-
-    if not str(message.chat.id) in ALLOWED_CHATS:
-        return
 
     if not settings.DEBUG:
         import docker
@@ -78,11 +90,9 @@ def get_containers_status(message):
 
 
 @bot.message_handler(func=lambda message: True)
+@access_verification
 def get_order_data(message):
     """Получение заказа в тг бота, для отправки в ручном режиме"""
-
-    if not str(message.chat.id) in ALLOWED_CHATS:
-        return
 
     serializer = TgSerializer()
     try:
@@ -92,7 +102,7 @@ def get_order_data(message):
         bot.reply_to(message, "Ошибка данных")
         return JsonResponse({"error": "Data serialization error"})
 
-    manager = WebhookDataManager(customer, order, products)
+    manager = DataManager(customer, order, products)
     manager.save_data()
     bot.reply_to(message, "Заказ принят")
 

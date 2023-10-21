@@ -5,8 +5,8 @@ from ..orders.models import Order
 from ..products.models import Pattern
 
 
-class WebhookDataManager:
-    """Модель отвечающая за данные полученные на вебхуке"""
+class DataManager:
+    """Модель отвечающая за данные полученные на вебхуке или тг"""
 
     def __init__(self, customer, order, products):
         self.customer = customer["customer"]
@@ -18,7 +18,8 @@ class WebhookDataManager:
         """Общий метод отвечающий за сохранение данных в БД"""
 
         customer = self.save_customer()
-        self.save_order(customer)
+        order = self.save_order(customer)
+        self.save_products(order)
 
     def save_customer(self) -> Customer:
         """Сохранение клиента в БД"""
@@ -38,13 +39,17 @@ class WebhookDataManager:
     def save_order(self, customer) -> None:
         """Сохранение заказа в БД"""
 
-        products_articles = [p["article"] for p in self.products]
-        products = Pattern.objects.filter(article__in=products_articles)
         order = Order.objects.create(
             number=self.order["order_number"],
             payment_amount=self.order["payment_amount"],
             customer=customer,
         )
         order.save()
+        return order
+
+    def save_products(self, order):
+        """Сохранение товаров к заказу в БД"""
+
+        products_articles = [p["article"] for p in self.products]
+        products = Pattern.objects.filter(article__in=products_articles)
         order.products.set(products)
-        order.save()

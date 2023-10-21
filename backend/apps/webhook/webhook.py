@@ -3,7 +3,7 @@ import os
 from functools import wraps
 
 from apps.utils import MessageSender
-from apps.webhook.manager import WebhookDataManager
+from apps.webhook.manager import DataManager
 from apps.webhook.serializers import WebhookSerializer
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
@@ -47,6 +47,6 @@ class WebhookView(View):
             MessageSender().send_error_message(f"Ошибка получения данных через webhook: {e}")
             return JsonResponse({"error": "Data serialization error"})
 
-        manager = WebhookDataManager(customer, order, products)
+        manager = DataManager(customer, order, products)
         manager.save_data()
         return JsonResponse({})
