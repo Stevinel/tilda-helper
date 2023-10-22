@@ -1,8 +1,13 @@
 from django.db import transaction
+from django.db import IntegrityError, OperationalError
 
 from ..customers.models import Customer
+from ..mail_sender.tasks import send_mail
 from ..orders.models import Order
 from ..products.models import Pattern
+from ..utils import MessageSender
+
+from sentry_sdk import capture_exception
 
 
 class DataManager:
@@ -17,9 +22,18 @@ class DataManager:
     def save_data(self) -> None:
         """Общий метод отвечающий за сохранение данных в БД"""
 
-        customer = self.save_customer()
-        order = self.save_order(customer)
-        self.save_products(order)
+        try:
+            customer = self.save_customer()
+            order = self.save_order(customer)
+            order_products = self.save_products(order)
+
+            self.send_order_data(order, customer, order_products)
+        except (IntegrityError, OperationalError) as e:
+            capture_exception(e)
+            message = f"Ошибка сохранения заказа: {order.number}"
+            MessageSender().send_error_message(message)
+
+
 
     def save_customer(self) -> Customer:
         """Сохранение клиента в БД"""
@@ -53,3 +67,19 @@ class DataManager:
         products_articles = [p["article"] for p in self.products]
         products = Pattern.objects.filter(article__in=products_articles)
         order.products.set(products)
+        return products
+
+    @staticmethod
+    def send_order_data(order, customer, order_products):
+        data = {
+            "customer": customer.id,
+            "products": [p.article for p in order_products],
+        }
+        message = (
+            f"Успешно получен заказ: {order.number} \n"
+            f"Заказ от клиента: {customer.last_name} {customer.first_name} "
+            f"{customer.patronymic_name} \n"
+            f"Отправляю товары на почту: {customer.email}"
+        )
+        MessageSender().send_success_message(message)
+        send_mail.delay(data)
