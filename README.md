@@ -16,17 +16,17 @@ Previously, the owner had to manually execute this entire workflow, a tedious pr
 
 ## 🌟 Features
 
-1. **Webhook Data Processing**: Receives orders via a webhook from Tilda and processes them.
-2. **Telegram Bot Integration**: Accepts data via a Telegram bot and sends orders to email.
-3. **Email Notifications**: Automatically sends purchased patterns to clients.
-4. **Client Data Management**: Stores client data with diverse filtering options.
-5. **Telegram and Sentry Error Reporting**: Notifies in Telegram about successful processes or errors and reports issues in Sentry.
-6. **Admin Panel Security**: Limits admin panel access after three failed attempts.
-7. **Database Management**: Performs weekly database dumps.
-8. **Product Management**: Stores product information and offers multiple sorting options.
-9. **Order Management**: Keeps detailed order records with sorting capabilities.
-10. **Docker Container Monitoring**: Updates on Docker container statuses via Telegram.
-11. **Newsletter Feature**: Allows broadcasting news to all clients, useful for announcing new products.
+- **Webhook Data Processing**: Receives orders via a webhook from Tilda and processes them.
+- **Telegram Bot Integration**: Accepts data via a Telegram bot and sends orders to email.
+- **Email Notifications**: Automatically sends purchased patterns to clients.
+- **Client Data Management**: Stores client data with diverse filtering options.
+- **Telegram and Sentry Error Reporting**: Notifies in Telegram about successful processes or errors and reports issues in Sentry.
+- **Admin Panel Security**: Limits admin panel access after three failed attempts.
+- **Database Management**: Performs weekly database dumps.
+- **Product Management**: Stores product information and offers multiple sorting options.
+- **Order Management**: Keeps detailed order records with sorting capabilities.
+- **Docker Container Monitoring**: Updates on Docker container statuses via Telegram.
+- **Newsletter Feature**: Allows broadcasting news to all clients, useful for announcing new products.
 
 ## 🛠️ Tech Stack
 
@@ -69,8 +69,8 @@ Previously, the owner had to manually execute this entire workflow, a tedious pr
     
     ADMIN_URL='admin/' # or custom admin URL
     
-    EMAIL=your email
-    EMAIL_TOKEN=email token
+    EMAIL='your email'
+    EMAIL_TOKEN='email token'
     
     CELERY_BROKER=redis://redis:6379/0
     DNS='your dns'
