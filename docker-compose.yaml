@@ -80,6 +80,8 @@ services:
   redis:
     image: redis:latest
     container_name: redis
+    depends_on:
+      - postgres
 
 
   celery:
@@ -89,7 +91,6 @@ services:
     depends_on:
       - backend
       - redis
-      - postgres
     volumes:
       - ./backend:/usr/src/app
       - static_value:/usr/src/app/static/
