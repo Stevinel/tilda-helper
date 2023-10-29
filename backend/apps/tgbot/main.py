@@ -2,11 +2,13 @@ import os
 from functools import wraps
 
 import django
+from celery import shared_task
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
 django.setup()
 
+import docker
 import telebot
 from apps.webhook.manager import DataManager
 from django.conf import settings
@@ -19,7 +21,18 @@ TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TARGET_CHAT_ID = os.getenv("TARGET_CHAT_ID")
 ALLOWED_CHATS = [x.strip() for x in os.getenv("ALLOWED_CHATS").split(",")]
 
-bot = telebot.TeleBot(TELEGRAM_TOKEN)
+BOT = telebot.TeleBot(TELEGRAM_TOKEN)
+CONTAINERS = {
+    'name': [
+        'tgbot',
+        'celery',
+        'nginx',
+        'backend',
+        'postgres',
+        'redis',
+        'backup',
+    ]
+}
 
 
 def access_verification(view_func):
@@ -35,22 +48,13 @@ def access_verification(view_func):
     return _wrapped_view
 
 
-def get_container_data(client):
+def get_container_data():
     """Получение состояния контейнеров"""
 
-    container_names = {
-        'name': [
-            'tgbot',
-            'celery',
-            'nginx',
-            'backend',
-            'postgres',
-            'redis',
-            'backup',
-        ]
-    }
-    containers = client.containers.list(filters=container_names)
+    docker_client = docker.from_env()
+    containers = docker_client.containers.list(filters=CONTAINERS)
     container_data = []
+
     for container in containers:
         container_info = {
             "name": container.name,
@@ -64,51 +68,68 @@ def get_container_data(client):
 def wake_up_msg():
     """Отправка приветствующего сообщения"""
 
-    bot.send_message(TARGET_CHAT_ID, "Я запустился")
+    BOT.send_message(TARGET_CHAT_ID, "Я запустился")
 
 
-@bot.message_handler(commands=['status'])
+@BOT.message_handler(commands=['status'])
 @access_verification
 def get_containers_status(message):
     """Проверка статусов контейнеров"""
 
-    if not settings.DEBUG:
-        import docker
-        client = docker.from_env()
-    else:
-        return bot.reply_to(message, "Выключите debug режим")
-
-    container_statuses = get_container_data(client)
+    container_statuses = get_container_data()
     msg = ''
+
     if container_statuses:
         for container in container_statuses:
             msg += f"Контейнер: {container['name']} - {container['status']}\n"
     if msg:
-        bot.reply_to(message, msg)
+        msg += f"\n Запущено {len(container_statuses)} из 7"
+        BOT.reply_to(message, msg)
     else:
-        bot.reply_to(message, "Не удалось получить статусы контейнеров")
+        BOT.reply_to(message, "Не удалось получить статусы контейнеров")
 
 
-@bot.message_handler(func=lambda message: True)
+@BOT.message_handler(commands=['restart'])
+@access_verification
+def restart_docker(message):
+    """Проверка статусов контейнеров"""
+
+    docker_client = docker.from_env()
+    containers = docker_client.containers.list(filters=CONTAINERS)
+    # Move tgbot container to the end
+    [containers.append(containers.pop(containers.index(c))) for c in containers if c.name == 'tgbot']
+
+    try:
+        for container in containers:
+            BOT.reply_to(message, f"Рестарт контейнера {container.name}")
+            container.restart()
+    except Exception as e:
+        BOT.reply_to(message, f"Не удалось перезапустить контейнеры. \n Ошибка: {e}")
+
+
+@BOT.message_handler(func=lambda message: True)
 @access_verification
 def get_order_data(message):
     """Получение заказа в тг бота, для отправки в ручном режиме"""
+
+    if not message.text.startswith("Order"):
+        return BOT.reply_to(message, "Пришлите заказ или команду")
 
     serializer = TgSerializer()
     try:
         customer, order, products = serializer.serialize(message)
     except Exception as e:
         capture_exception(e)
-        bot.reply_to(message, "Ошибка данных")
+        BOT.reply_to(message, "Ошибка данных")
         return JsonResponse({"error": "Data serialization error"})
 
     manager = DataManager(customer, order, products)
     manager.save_data()
-    bot.reply_to(message, "Заказ принят")
+    BOT.reply_to(message, "Заказ принят")
 
 
 if __name__ == "__main__":
     if not settings.DEBUG:
         wake_up_msg()
 
-    bot.infinity_polling()
+    BOT.infinity_polling()

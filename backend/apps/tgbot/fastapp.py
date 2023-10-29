@@ -4,7 +4,7 @@ from functools import wraps
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
-from .main import TARGET_CHAT_ID, bot
+from .main import TARGET_CHAT_ID, BOT
 
 app = FastAPI()
 
