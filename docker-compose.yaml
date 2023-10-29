@@ -82,6 +82,7 @@ services:
     container_name: redis
     depends_on:
       - postgres
+    restart: always
 
 
   celery:
@@ -91,6 +92,7 @@ services:
     depends_on:
       - backend
       - redis
+    restart: always
     volumes:
       - ./backend:/usr/src/app
       - static_value:/usr/src/app/static/
