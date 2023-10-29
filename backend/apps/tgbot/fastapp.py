@@ -30,7 +30,7 @@ def access_verification(view_func):
 def read_root(data: dict):
     """Отправка ошибок в закрытую группу ТГ"""
 
-    bot.send_message(TARGET_CHAT_ID, data["message"])
+    BOT.send_message(TARGET_CHAT_ID, data["message"])
     return JSONResponse({"success": True})
 
 
@@ -39,5 +39,5 @@ def read_root(data: dict):
 def send_message(data: dict):
     """Отправка успешных сообщений в закрытую группу ТГ"""
 
-    bot.send_message(TARGET_CHAT_ID, data["message"])
+    BOT.send_message(TARGET_CHAT_ID, data["message"])
     return JSONResponse({"success": True})
