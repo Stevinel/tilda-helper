@@ -92,7 +92,7 @@ def get_containers_status(message):
 @BOT.message_handler(commands=['restart'])
 @access_verification
 def restart_docker(message):
-    """Проверка статусов контейнеров"""
+    """Рестарт контейнеров"""
 
     docker_client = docker.from_env()
     containers = docker_client.containers.list(filters=CONTAINERS)
