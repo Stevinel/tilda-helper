@@ -29,9 +29,9 @@ class TgSerializer:
             if name_match:
                 full_name = name_match.group(1).split()
                 if len(full_name) >= 1:
-                    first_name = full_name[0]
+                    last_name = full_name[0]
                 if len(full_name) >= 2:
-                    last_name = full_name[1]
+                    first_name = full_name[1]
                 if len(full_name) >= 3:
                     patronymic_name = full_name[2]
 

@@ -12,8 +12,8 @@ class WebhookSerializer:
 
         customer = {
             "customer": {
-                "first_name": name_parts[0] if len(name_parts) >= 1 else "",
-                "last_name": name_parts[1] if len(name_parts) >= 2 else "",
+                "last_name": name_parts[0] if len(name_parts) >= 1 else "",
+                "first_name": name_parts[1] if len(name_parts) >= 2 else "",
                 "patronymic_name": name_parts[2] if len(name_parts) == 3 else "",
                 "email": email,
                 "phone_number": data["Phone"],
