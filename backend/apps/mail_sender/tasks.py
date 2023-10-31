@@ -37,7 +37,7 @@ def send_mail(self, data):
     message["To"] = to_addr
     message["Subject"] = "Выкройки"
 
-    full_name = " ".join([client.first_name, client.patronymic_name, client.last_name]).rstrip()
+    full_name = " ".join([client.last_name, client.first_name, client.patronymic_name]).rstrip()
     html = render_to_string("email.html", context={"client": full_name})
     message.attach(MIMEText(html, "html"))
 
