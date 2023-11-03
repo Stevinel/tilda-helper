@@ -67,7 +67,7 @@ def get_container_data():
 def wake_up_msg():
     """Отправка приветствующего сообщения"""
 
-    BOT.send_message(TARGET_CHAT_ID, "Я запустился")
+    BOT.send_message(TARGET_CHAT_ID, "Бот перезапущен")
 
 
 @BOT.message_handler(commands=['status'])
