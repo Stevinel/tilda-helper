@@ -24,14 +24,14 @@ def access_verification(view_func):
 
     @wraps(view_func)
     def _wrapped_view(self, request, *args, **kwargs):
-        request_user = request.body['from']['id']
 
         try:
-            if request_user in ALLOWED_CHATS:
-                data = request.body.decode('UTF-8')
+            data = json.loads(request.body.decode("unicode_escape"))
+
+            request_user_id = data["message"]["from"]["id"]
+            if request_user_id in ALLOWED_CHATS:
                 return view_func(self, request, data, bot=True, *args, **kwargs)
 
-            data = json.loads(request.body.decode("unicode_escape"))
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"})
 
