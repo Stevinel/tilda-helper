@@ -116,7 +116,7 @@ services:
     depends_on:
       - backend
       - postgres
-    command: sh -c 'python -m apps.tgbot.main & uvicorn apps.tgbot.fastapp:app --host 0.0.0.0 --port 5555 --reload'
+    command: sh -c 'uvicorn apps.tgbot.fastapp:app --host 0.0.0.0 --port 5555 & python -m apps.tgbot.main'
     ports:
       - "5555:5555"
 
