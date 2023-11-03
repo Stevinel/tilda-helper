@@ -131,4 +131,4 @@ if __name__ == "__main__":
     if not settings.DEBUG:
         wake_up_msg()
 
-    BOT.infinity_polling()
+    BOT.infinity_polling(long_polling_timeout=30)
