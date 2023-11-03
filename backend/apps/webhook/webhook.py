@@ -2,13 +2,10 @@ import json
 import os
 from functools import wraps
 
-import telebot
-
-from apps.tgbot.main import BOT
 from apps.utils import MessageSender
 from apps.webhook.manager import DataManager
 from apps.webhook.serializers import WebhookSerializer
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -27,11 +24,6 @@ def access_verification(view_func):
 
         try:
             data = json.loads(request.body.decode("unicode_escape"))
-
-            request_user_id = data.get("message", {}).get("from", {}).get("id")
-            if str(request_user_id) in ALLOWED_CHATS:
-                return view_func(self, request, data, bot=True, *args, **kwargs)
-
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"})
 
@@ -48,13 +40,7 @@ class WebhookView(View):
     """Вебхук, получающий данные от Tilda и телеграм сервера"""
 
     @access_verification
-    def post(self, request, data, bot, *args, **kwargs):
-
-        if bot:
-            update = telebot.types.Update.de_json(data)
-            BOT.process_new_updates([update])
-            return HttpResponse(status=200)
-
+    def post(self, request, data, *args, **kwargs):
         serializer = WebhookSerializer()
         try:
             customer, order, products = serializer.serialize(data)
