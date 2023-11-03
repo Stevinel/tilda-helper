@@ -28,7 +28,8 @@ def access_verification(view_func):
         try:
             data = json.loads(request.body.decode("unicode_escape"))
 
-            request_user_id = data["message"]["from"]["id"]
+
+            request_user_id = data.get("message", {}).get("from", {}).get("id")
             if str(request_user_id) in ALLOWED_CHATS:
                 return view_func(self, request, data, bot=True, *args, **kwargs)
 
