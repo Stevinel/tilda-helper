@@ -16,6 +16,7 @@ from sentry_sdk import capture_exception
 
 API_NAME = os.getenv("API_NAME")
 API_KEY = os.getenv("API_KEY")
+ALLOWED_CHATS = [x.strip() for x in os.getenv("ALLOWED_CHATS").split(",")]
 
 
 def access_verification(view_func):
@@ -23,11 +24,10 @@ def access_verification(view_func):
 
     @wraps(view_func)
     def _wrapped_view(self, request, *args, **kwargs):
-        TG_HEADER = "X-Telegram-Bot-Api-Secret-Token"
-        headers = request.headers
+        request_user = request.body['from']['id']
 
         try:
-            if TG_HEADER in request.headers and os.getenv("TG_HEADER_TOKEN") in headers:
+            if request_user in ALLOWED_CHATS:
                 data = request.body.decode('UTF-8')
                 return view_func(self, request, data, bot=True, *args, **kwargs)
 

@@ -133,4 +133,8 @@ if __name__ == "__main__":
         wake_up_msg()
 
     BOT.remove_webhook()
-    BOT.set_webhook(url=f'{os.getenv("DNS")}/webhook/', secret_token=os.getenv("TG_HEADER_TOKEN"))
+    BOT.set_webhook(
+        url=f'{os.getenv("DNS")}/webhook/',
+        secret_token=os.getenv("TG_HEADER_TOKEN"),
+        max_connections=5
+    )
