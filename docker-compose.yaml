@@ -105,7 +105,7 @@ services:
   tgbot:
     container_name: tgbot
     build: ./backend
-    restart: always
+    restart: on-failure
     volumes:
       - ./backend:/usr/src/app
       - static_value:/usr/src/app/static/
