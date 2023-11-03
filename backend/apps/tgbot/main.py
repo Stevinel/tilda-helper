@@ -95,8 +95,7 @@ def restart_containers(message):
 
     docker_client = docker.from_env()
     containers = docker_client.containers.list(filters=CONTAINERS)
-    # Move tgbot container to the end
-    [containers.append(containers.pop(containers.index(c))) for c in containers if c.name == 'tgbot']
+    containers = [c for c in containers if c.name != 'tgbot']
 
     try:
         for container in containers:
