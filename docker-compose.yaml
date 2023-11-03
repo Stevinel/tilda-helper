@@ -105,7 +105,7 @@ services:
   tgbot:
     container_name: tgbot
     build: ./backend
-    restart: on-failure
+    restart: always
     volumes:
       - ./backend:/usr/src/app
       - static_value:/usr/src/app/static/
@@ -115,7 +115,7 @@ services:
     depends_on:
       - backend
       - postgres
-    command: sh -c 'uvicorn apps.tgbot.fastapp:app --host 0.0.0.0 --port 5555 & python -m apps.tgbot.main'
+    command: sh -c 'python -m apps.tgbot.main & uvicorn apps.tgbot.fastapp:app --host 0.0.0.0 --port 5555 --reload'
     ports:
       - "5555:5555"
 
