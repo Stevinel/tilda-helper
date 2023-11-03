@@ -2,7 +2,6 @@ import os
 from functools import wraps
 
 import django
-from celery import shared_task
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
@@ -132,9 +131,9 @@ if __name__ == "__main__":
     if not settings.DEBUG:
         wake_up_msg()
 
-    BOT.remove_webhook()
-    BOT.set_webhook(
-        url=f'{os.getenv("DNS")}/webhook/',
-        secret_token=os.getenv("TG_HEADER_TOKEN"),
-        max_connections=5
-    )
+        BOT.remove_webhook()
+        BOT.set_webhook(
+            url=f'{os.getenv("DNS")}/webhook/',
+            secret_token=os.getenv("TG_HEADER_TOKEN"),
+            max_connections=5
+        )
