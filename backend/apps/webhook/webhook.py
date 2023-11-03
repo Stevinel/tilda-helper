@@ -46,8 +46,7 @@ class WebhookView(View):
     def post(self, request, data, *args, **kwargs):
 
         if 'message' in request.POST or 'update_id' in request.POST:
-            json_str = request.body.decode('UTF-8')
-            update = BOT.types.Update.de_json(json_str)
+            update = BOT.types.Update.de_json(data)
             BOT.process_new_updates([update])
             return HttpResponse(status=200)
 
