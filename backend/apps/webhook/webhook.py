@@ -27,7 +27,7 @@ def access_verification(view_func):
         headers = request.headers
 
         try:
-            if TG_HEADER in request.headers and os.getenv("SECRET_KEY") in headers:
+            if TG_HEADER in request.headers and os.getenv("TG_HEADER_TOKEN") in headers:
                 data = request.body.decode('UTF-8')
                 return view_func(self, request, data, bot=True, *args, **kwargs)
 
