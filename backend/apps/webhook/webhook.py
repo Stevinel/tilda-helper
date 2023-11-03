@@ -2,10 +2,11 @@ import json
 import os
 from functools import wraps
 
+from apps.tgbot.main import BOT
 from apps.utils import MessageSender
 from apps.webhook.manager import DataManager
 from apps.webhook.serializers import WebhookSerializer
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -39,6 +40,13 @@ class WebhookView(View):
 
     @access_verification
     def post(self, request, data, *args, **kwargs):
+
+        if 'message' in request.POST or 'update_id' in request.POST:
+            json_str = request.body.decode('UTF-8')
+            update = BOT.types.Update.de_json(json_str)
+            BOT.process_new_updates([update])
+            return HttpResponse(status=200)
+
         serializer = WebhookSerializer()
         try:
             customer, order, products = serializer.serialize(data)
@@ -50,3 +58,4 @@ class WebhookView(View):
         manager = DataManager(customer, order, products)
         manager.save_data()
         return JsonResponse({})
+

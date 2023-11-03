@@ -27,7 +27,7 @@ def access_verification(view_func):
 
 @app.post("/notification/send_error/")
 @access_verification
-def read_root(data: dict):
+def send_error(data: dict):
     """Отправка ошибок в закрытую группу ТГ"""
 
     BOT.send_message(TARGET_CHAT_ID, data["message"])

@@ -1,4 +1,28 @@
-version: "3.3"
+version: "3.6"
+
+x-environment-defaults: &default-environment
+  environment:
+    - DEBUG
+    - DB_PASS
+    - DB_USER
+    - DB_NAME
+    - DB_PORT
+    - DB_HOST
+    - DOMAIN
+    - SECRET_KEY
+    - ALLOWED_HOSTS
+    - API_KEY
+    - API_NAME
+    - ADMIN_URL
+    - EMAIL
+    - EMAIL_TOKEN
+    - CELERY_BROKER
+    - TELEGRAM_TOKEN
+    - TARGET_CHAT_ID
+    - CSRF_TRUSTED_DOMAINS
+    - SENTRY_DNS
+    - DNS
+    - ALLOWED_CHATS
 
 
 services:
@@ -36,9 +60,7 @@ services:
       - POSTGRES_PASSWORD=${DB_PASS}
       - POSTGRES_EXTRA_OPTS=-Z9 -E UTF-8 --schema=public --blobs
       - SCHEDULE=@weekly
-      - BACKUP_KEEP_DAYS=2
       - BACKUP_KEEP_WEEKS=2
-      - BACKUP_KEEP_MONTHS=2
 
 
   backend:
@@ -49,28 +71,7 @@ services:
       - ./backend:/usr/src/app
       - static_value:/usr/src/app/static/
       - media_value:/usr/src/app/media/
-    environment:
-      - DEBUG=${DEBUG}
-      - DB_PASS=${DB_PASS}
-      - DB_USER=${DB_USER}
-      - DB_NAME=${DB_NAME}
-      - DB_PORT=${DB_PORT}
-      - DB_HOST=${DB_HOST}
-      - DOMAIN=${DOMAIN}
-      - SECRET_KEY=${SECRET_KEY}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
-      - API_KEY=${API_KEY}
-      - API_NAME=${API_NAME}
-      - ADMIN_URL=${ADMIN_URL}
-      - EMAIL=${EMAIL}
-      - EMAIL_TOKEN=${EMAIL_TOKEN}
-      - CELERY_BROKER=${CELERY_BROKER}
-      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
-      - TARGET_CHAT_ID=${TARGET_CHAT_ID}
-      - CSRF_TRUSTED_DOMAINS=${CSRF_TRUSTED_DOMAINS}
-      - SENTRY_DNS=${SENTRY_DNS}
-      - DNS=${DNS}
-      - ALLOWED_CHATS=${ALLOWED_CHATS}
+    <<: *default-environment
     depends_on:
       postgres:
         condition: service_healthy
@@ -97,28 +98,7 @@ services:
       - ./backend:/usr/src/app
       - static_value:/usr/src/app/static/
       - media_value:/usr/src/app/media/
-    environment:
-      - DEBUG=${DEBUG}
-      - DB_PASS=${DB_PASS}
-      - DB_USER=${DB_USER}
-      - DB_NAME=${DB_NAME}
-      - DB_PORT=${DB_PORT}
-      - DB_HOST=${DB_HOST}
-      - DOMAIN=${DOMAIN}
-      - SECRET_KEY=${SECRET_KEY}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
-      - API_KEY=${API_KEY}
-      - API_NAME=${API_NAME}
-      - ADMIN_URL=${ADMIN_URL}
-      - EMAIL=${EMAIL}
-      - EMAIL_TOKEN=${EMAIL_TOKEN}
-      - CELERY_BROKER=${CELERY_BROKER}
-      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
-      - TARGET_CHAT_ID=${TARGET_CHAT_ID}
-      - CSRF_TRUSTED_DOMAINS=${CSRF_TRUSTED_DOMAINS}
-      - SENTRY_DNS=${SENTRY_DNS}
-      - DNS=${DNS}
-      - ALLOWED_CHATS=${ALLOWED_CHATS}
+    <<: *default-environment
     command: celery -A config worker -l error -c 2
 
 
@@ -131,28 +111,7 @@ services:
       - static_value:/usr/src/app/static/
       - media_value:/usr/src/app/media/
       - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - DEBUG=${DEBUG}
-      - DB_PASS=${DB_PASS}
-      - DB_USER=${DB_USER}
-      - DB_NAME=${DB_NAME}
-      - DB_PORT=${DB_PORT}
-      - DB_HOST=${DB_HOST}
-      - DOMAIN=${DOMAIN}
-      - SECRET_KEY=${SECRET_KEY}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
-      - API_KEY=${API_KEY}
-      - API_NAME=${API_NAME}
-      - ADMIN_URL=${ADMIN_URL}
-      - EMAIL=${EMAIL}
-      - EMAIL_TOKEN=${EMAIL_TOKEN}
-      - CELERY_BROKER=${CELERY_BROKER}
-      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
-      - TARGET_CHAT_ID=${TARGET_CHAT_ID}
-      - CSRF_TRUSTED_DOMAINS=${CSRF_TRUSTED_DOMAINS}
-      - SENTRY_DNS=${SENTRY_DNS}
-      - DNS=${DNS}
-      - ALLOWED_CHATS=${ALLOWED_CHATS}
+    <<: *default-environment
     depends_on:
       - backend
       - postgres
