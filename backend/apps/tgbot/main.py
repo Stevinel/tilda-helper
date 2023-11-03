@@ -132,5 +132,4 @@ if __name__ == "__main__":
     if not settings.DEBUG:
         wake_up_msg()
 
-    BOT.remove_webhook()
-    BOT.set_webhook(url=f'{os.getenv("DNS")}/webhook')
+    BOT.infinity_polling()
