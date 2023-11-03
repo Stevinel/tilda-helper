@@ -29,7 +29,7 @@ def access_verification(view_func):
             data = json.loads(request.body.decode("unicode_escape"))
 
             request_user_id = data["message"]["from"]["id"]
-            if request_user_id in ALLOWED_CHATS:
+            if str(request_user_id) in ALLOWED_CHATS:
                 return view_func(self, request, data, bot=True, *args, **kwargs)
 
         except json.JSONDecodeError:
