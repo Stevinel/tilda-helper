@@ -22,6 +22,10 @@ def access_verification(view_func):
     @wraps(view_func)
     def _wrapped_view(self, request, *args, **kwargs):
         try:
+            if 'message' in request.POST or 'update_id' in request.POST:
+                data = request.body.decode('UTF-8')
+                return view_func(self, request, data, *args, **kwargs)
+
             data = json.loads(request.body.decode("unicode_escape"))
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"})
