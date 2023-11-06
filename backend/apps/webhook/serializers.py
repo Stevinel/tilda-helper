@@ -1,4 +1,7 @@
-class WebhookSerializer:
+from apps.utils import PhoneFormatter
+
+
+class WebhookSerializer(PhoneFormatter):
     """Сериализация данных, полученных в вебхуке"""
 
     def serialize(self, data):
@@ -6,6 +9,7 @@ class WebhookSerializer:
 
         name_parts = data["Name"].split()
 
+        phone = self.get_phone(data["Phone"])
         email = data["Email"]
         if email.endswith("gmail.ru"):
             email = email.replace("gmail.ru", "gmail.com")
@@ -16,7 +20,7 @@ class WebhookSerializer:
                 "first_name": name_parts[1] if len(name_parts) >= 2 else "",
                 "patronymic_name": name_parts[2] if len(name_parts) == 3 else "",
                 "email": email,
-                "phone_number": data["Phone"],
+                "phone_number": phone,
             }
         }
 

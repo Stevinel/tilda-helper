@@ -33,13 +33,14 @@ class DataManager:
             message = f"Ошибка сохранения заказа: {order.number}"
             MessageSender().send_error_message(message)
 
-
-
     def save_customer(self) -> Customer:
         """Сохранение клиента в БД"""
 
         try:
             customer = Customer.objects.get(email=self.customer["email"])
+            if customer.phone_number != self.customer["phone_number"]:
+                customer.phone_number = self.customer["phone_number"]
+                customer.save()
         except Customer.DoesNotExist:
             customer = Customer.objects.create(
                 first_name=self.customer["first_name"],

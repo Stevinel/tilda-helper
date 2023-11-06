@@ -1,7 +1,9 @@
 import re
 
+from apps.utils import PhoneFormatter
 
-class TgSerializer:
+
+class TgSerializer(PhoneFormatter):
     """Сериализация данных, полученных из ТГ"""
 
     def serialize(self, message):
@@ -41,7 +43,7 @@ class TgSerializer:
 
             phone_match = re.search(r'Phone: (.+)', message.text)
             if phone_match:
-                phone_number = re.sub(r'[^\d]+', '', phone_match.group(1))
+                phone_number = self.get_phone(phone_match.group(1))
         else:
             return
 

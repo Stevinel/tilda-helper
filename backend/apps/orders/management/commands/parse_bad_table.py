@@ -1,9 +1,9 @@
-import re
-
 from apps.customers.models import Customer
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from openpyxl import load_workbook
+
+from apps.utils import PhoneFormatter
 
 # Признаки для определения покупателя как "мастер"
 MASTER_DATA = [
@@ -28,7 +28,7 @@ MASTER_DATA = [
     "Марафон"
 ]
 
-class Command(BaseCommand):
+class Command(BaseCommand, PhoneFormatter):
     help = "Парсит древние таблицы с заказами и записывает их в существующую БД"
 
     def __init__(self):
@@ -78,27 +78,6 @@ class Command(BaseCommand):
         patronymic_name = full_name[2] if len(full_name) >= 3 else ""
 
         return last_name, first_name, patronymic_name
-
-    @staticmethod
-    def get_phone(phone):
-        """Форматируем номер телефона"""
-
-        if not phone:
-            return "+7 (666) 666-66-66"
-
-        digits = re.sub(r'\D', '', phone)
-
-        # Проверяем начало номера и длину
-        if len(digits) == 11 and (digits.startswith('7') or digits.startswith('8')):
-            # Используем срез для форматирования, отбрасывая первую цифру
-            return "+7 ({}) {}-{}-{}".format(digits[1:4], digits[4:7], digits[7:9], digits[9:11])
-        elif len(digits) == 10:
-            # Если номер уже без ведущей 7 или 8
-            return "+7 ({}) {}-{}-{}".format(digits[0:3], digits[3:6], digits[6:8], digits[8:10])
-        elif phone == 'yes':
-            return "+7 (666) 666-66-66"
-        else:
-            return phone
 
     @transaction.atomic
     def save_customers(self):
