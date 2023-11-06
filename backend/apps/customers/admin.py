@@ -46,7 +46,10 @@ class OrderSumFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         value = self.value()
         queryset = queryset.annotate(
-            orders_sum=Coalesce(Sum('orders__payment_amount'), Value(0)) + F('sum_old_orders')
+            orders_sum=Coalesce(
+                Sum('orders__payment_amount'), Value(0)) +
+                       Coalesce(
+                F('sum_old_orders'), Value(0))
         )
 
         if value == "asc":
@@ -98,6 +101,7 @@ class CustomerAdmin(admin.ModelAdmin):
         "groups",
         "last_login",
         "password",
+        "sum_old_orders",
     )
 
     def display_orders_count(self, obj):
