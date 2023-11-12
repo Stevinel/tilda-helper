@@ -23,7 +23,8 @@ class TgSerializer(PhoneFormatter):
             article_matches = re.findall(r'\d{6},', message.text) # only 6 numbers article
             articles = [article.rstrip(',') for article in article_matches]
 
-            payment_match = re.search(r'Payment Amount: (\d+) RUB', message.text)
+            payment_match = re.search(r'Payment Amount: (\d+(\.\d+)?) RUB', message.text)
+
             if payment_match:
                 payment_amount = payment_match.group(1)
                 payment_amount = payment_amount.replace(',', '.')
