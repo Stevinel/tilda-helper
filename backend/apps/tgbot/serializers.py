@@ -26,6 +26,7 @@ class TgSerializer(PhoneFormatter):
             payment_match = re.search(r'Payment Amount: (\d+) RUB', message.text)
             if payment_match:
                 payment_amount = payment_match.group(1)
+                payment_amount = payment_amount.replace(',', '.')
 
             name_match = re.search(r'Name: (.+)', message.text)
             if name_match:

@@ -118,7 +118,7 @@ def get_order_data(message):
         customer, order, products = serializer.serialize(message)
     except Exception as e:
         capture_exception(e)
-        BOT.reply_to(message, "Ошибка данных")
+        BOT.reply_to(message, "Ошибка данных", e)
         return JsonResponse({"error": "Data serialization error"})
 
     manager = DataManager(customer, order, products)

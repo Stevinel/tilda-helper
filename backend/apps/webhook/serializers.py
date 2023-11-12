@@ -24,10 +24,11 @@ class WebhookSerializer(PhoneFormatter):
             }
         }
 
+        payment_amount = data["payment"]["amount"].replace(',', '.')
         order = {
             "order": {
                 "order_number": data["payment"]["orderid"],
-                "payment_amount": int(data["payment"]["amount"]),
+                "payment_amount": int(payment_amount),
             }
         }
 
