@@ -27,7 +27,7 @@ class WebhookSerializer(PhoneFormatter):
         order = {
             "order": {
                 "order_number": data["payment"]["orderid"],
-                "payment_amount": data["payment"]["amount"],
+                "payment_amount": int(data["payment"]["amount"]),
             }
         }
 

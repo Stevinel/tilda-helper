@@ -60,7 +60,7 @@ class TgSerializer(PhoneFormatter):
         order = {
             "order": {
                 "order_number": order_number,
-                "payment_amount": payment_amount,
+                "payment_amount": int(payment_amount),
             }
         }
 
