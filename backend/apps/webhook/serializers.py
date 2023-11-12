@@ -7,7 +7,7 @@ class WebhookSerializer(Formatter):
     def serialize(self, data: dict) -> tuple:
         """Сериализация входящих данных из вебхука тильды"""
 
-        last_name, first_name, patronymic_name = self.format_full_namme(data["Name"])
+        last_name, first_name, patronymic_name = self.format_full_name(data["Name"])
         phone = self.format_phone(data["Phone"])
         email = self.format_email(data["Email"])
         payment_amount = self.format_payment(data["payment"]["amount"])
