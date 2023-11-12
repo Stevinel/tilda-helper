@@ -41,7 +41,11 @@ def send_mail(self, data):
     html = render_to_string("email.html", context={"client": full_name})
     message.attach(MIMEText(html, "html"))
 
+    if not products:
+        MessageSender().send_error_message(f"Не найдены товары для заказа")
+
     for pattern in products:
+        logger.info(pattern)
         if pattern.pdf_file:
             pdf_attachment = MIMEApplication(pattern.pdf_file.read(), _subtype="pdf")
             pdf_attachment.add_header(
@@ -54,6 +58,7 @@ def send_mail(self, data):
                 f"Заказ не будет доставлен на почту {client.email}"
             )
             return capture_message(f"Не добавлен pdf file в товар: {pattern.name}")
+
 
     server = smtplib.SMTP_SSL("smtp.mail.ru", 465)
     server.login(sender, email_password)
