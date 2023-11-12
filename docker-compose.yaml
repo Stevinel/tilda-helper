@@ -100,7 +100,7 @@ services:
       - static_value:/usr/src/app/static/
       - media_value:/usr/src/app/media/
     <<: *default-environment
-    command: celery -A config worker -l info -c 2
+    command: celery -A config worker -l error -c 2
 
 
   tgbot:
