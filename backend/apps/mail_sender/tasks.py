@@ -42,7 +42,7 @@ def send_mail(self, data):
     message.attach(MIMEText(html, "html"))
 
     if not products:
-        MessageSender().send_error_message(f"Не найдены товары для заказа")
+        return MessageSender().send_error_message(f"Не найдены товары для заказа")
 
     for pattern in products:
         logger.info(pattern)
