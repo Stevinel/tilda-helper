@@ -47,7 +47,7 @@ def access_verification(view_func):
     return _wrapped_view
 
 
-def get_container_data():
+def get_container_data() -> list:
     """Получение состояния контейнеров"""
 
     docker_client = docker.from_env()
@@ -64,7 +64,7 @@ def get_container_data():
     return container_data
 
 
-def wake_up_msg():
+def wake_up_msg() -> None:
     """Отправка приветствующего сообщения"""
 
     BOT.send_message(TARGET_CHAT_ID, "Бот перезапущен")
@@ -72,7 +72,7 @@ def wake_up_msg():
 
 @BOT.message_handler(commands=['status'])
 @access_verification
-def get_containers_status(message):
+def get_containers_status(message: telebot.types.Message) -> telebot.types.Message:
     """Проверка статусов контейнеров"""
 
     container_statuses = get_container_data()
@@ -90,7 +90,7 @@ def get_containers_status(message):
 
 @BOT.message_handler(commands=['restart'])
 @access_verification
-def restart_containers(message):
+def restart_containers(message: telebot.types.Message) -> telebot.types.Message:
     """Рестарт контейнеров"""
 
     docker_client = docker.from_env()
@@ -107,7 +107,7 @@ def restart_containers(message):
 
 @BOT.message_handler(func=lambda message: True)
 @access_verification
-def get_order_data(message):
+def get_order_data(message: telebot.types.Message) -> JsonResponse | telebot.types.Message:
     """Получение заказа в тг бота, для отправки в ручном режиме"""
 
     if not message.text.startswith("Order"):

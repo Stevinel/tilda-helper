@@ -1,5 +1,6 @@
 import logging
 import os
+import warnings
 from pathlib import Path
 
 import sentry_sdk
@@ -53,11 +54,12 @@ AXES_LOCKOUT_URL = "https://go-friend-go.narod.ru/"
 ROOT_URLCONF = "config.urls"
 
 EMAIL_TEMPLATE_DIR = os.path.join(BASE_DIR, "templates/email/")
+ORDER_ADMIN_TEMPLATE_DIR = os.path.join(BASE_DIR, "templates/admin/orders/Order/")
 BASE_TEMPLATES_DIRS = BASE_DIR / "backend/templates"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_TEMPLATES_DIRS, EMAIL_TEMPLATE_DIR],
+        "DIRS": [BASE_TEMPLATES_DIRS, EMAIL_TEMPLATE_DIR, ORDER_ADMIN_TEMPLATE_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -148,3 +150,12 @@ logging.basicConfig(
 console = logging.StreamHandler()
 console.setLevel(logging.DEBUG)
 logging.getLogger("").addHandler(console)
+
+
+warnings.filterwarnings(
+    'ignore',
+    message="DateTimeField .* received a naive datetime",
+    category=RuntimeWarning,
+    module='django.db.models.fields',
+)
+

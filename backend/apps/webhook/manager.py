@@ -10,10 +10,29 @@ from ..utils import MessageSender
 from sentry_sdk import capture_exception
 
 
-class DataManager:
-    """Модель отвечающая за данные полученные на вебхуке или тг"""
+class DataSender:
+    """Класс отвечающий за отправку сохранённых данных"""
 
-    def __init__(self, customer, order, products):
+    @staticmethod
+    def send_order_data(order: Order, customer: Customer, order_products: Pattern) -> None:
+        data = {
+            "customer": customer.id,
+            "products": [p.article for p in order_products],
+        }
+        message = (
+            f"Успешно получен заказ: {order.number} \n"
+            f"Заказ от клиента: {customer.last_name} {customer.first_name} "
+            f"{customer.patronymic_name} \n"
+            f"Отправляю товары на почту: {customer.email}"
+        )
+        MessageSender().send_success_message(message)
+        send_mail.delay(data)
+
+
+class DataManager(DataSender):
+    """Класс отвечающая за сохранение данных полученных на вебхуке или тг"""
+
+    def __init__(self, customer: dict, order: dict, products: dict):
         self.customer = customer["customer"]
         self.order = order["order"]
         self.products = products["products"]
@@ -51,7 +70,7 @@ class DataManager:
             )
         return customer
 
-    def save_order(self, customer) -> None:
+    def save_order(self, customer: Customer) -> None:
         """Сохранение заказа в БД"""
 
         order = Order.objects.create(
@@ -62,25 +81,10 @@ class DataManager:
         order.save()
         return order
 
-    def save_products(self, order):
+    def save_products(self, order: Order) -> Pattern:
         """Сохранение товаров к заказу в БД"""
 
         products_articles = [p["article"] for p in self.products]
         products = Pattern.objects.filter(article__in=products_articles)
         order.products.set(products)
         return products
-
-    @staticmethod
-    def send_order_data(order, customer, order_products):
-        data = {
-            "customer": customer.id,
-            "products": [p.article for p in order_products],
-        }
-        message = (
-            f"Успешно получен заказ: {order.number} \n"
-            f"Заказ от клиента: {customer.last_name} {customer.first_name} "
-            f"{customer.patronymic_name} \n"
-            f"Отправляю товары на почту: {customer.email}"
-        )
-        MessageSender().send_success_message(message)
-        send_mail.delay(data)

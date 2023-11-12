@@ -104,10 +104,10 @@ class CustomerAdmin(admin.ModelAdmin):
         "sum_old_orders",
     )
 
-    def display_orders_count(self, obj):
+    def display_orders_count(self, obj: Customer) -> int:
         return obj.orders.count()
 
-    def display_orders_sum(self, obj):
+    def display_orders_sum(self, obj: Customer) -> int:
         old_sum_orders = obj.sum_old_orders if obj.sum_old_orders else 0
         return sum([o.payment_amount for o in obj.orders.all()]) + old_sum_orders
 

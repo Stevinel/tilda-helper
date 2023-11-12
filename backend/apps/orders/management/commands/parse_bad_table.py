@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from openpyxl import load_workbook
 
-from apps.utils import PhoneFormatter
+from apps.utils import Formatter
 
 # Признаки для определения покупателя как "мастер"
 MASTER_DATA = [
@@ -28,7 +28,7 @@ MASTER_DATA = [
     "Марафон"
 ]
 
-class Command(BaseCommand, PhoneFormatter):
+class Command(BaseCommand, Formatter):
     help = "Парсит древние таблицы с заказами и записывает их в существующую БД"
 
     def __init__(self):
@@ -67,25 +67,13 @@ class Command(BaseCommand, PhoneFormatter):
         if self.master:
             self.save_customers()
 
-    @staticmethod
-    def get_fio(full_name):
-        """Разбивка ФИО на части"""
-
-        full_name = full_name.split() if full_name else ""
-
-        last_name = full_name[0] if len(full_name) >= 1 else ""
-        first_name = full_name[1] if len(full_name) >= 2 else ""
-        patronymic_name = full_name[2] if len(full_name) >= 3 else ""
-
-        return last_name, first_name, patronymic_name
-
     @transaction.atomic
     def save_customers(self):
         """Сохранение клиентов в БД"""
 
         for email, values in self.master.items():
-            last_name, first_name, patronymic_name = self.get_fio(values[0])
-            phone = self.get_phone(values[1])
+            last_name, first_name, patronymic_name = self.format_full_name(values[0]) if values else ""
+            phone = self.format_phone(values[1])
             sum_orders = values[2] if values[2] else 0
 
             try:

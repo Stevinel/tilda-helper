@@ -1,0 +1,22 @@
+{% extends "admin/change_list.html" %}
+
+{% block search %}
+  {{ block.super }}
+  <div class="stats">
+      <h2>Статистика заказов</h2>
+      <div class="stats-today">
+          <h3>Сегодня</h3>
+          <p>Количество заказов: {{ today_stats.total }}</p>
+          <p>Сумма заказов: {{ today_stats.sum }}</p>
+      </div>
+      <div class="stats-yesterday">
+          <h3>Вчера</h3>
+          <p>Количество заказов: {{ yesterday_stats.total }}</p>
+          <p>Сумма заказов: {{ yesterday_stats.sum }}</p>
+      </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  {{ block.super }}
+{% endblock %}

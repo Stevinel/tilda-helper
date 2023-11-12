@@ -1,44 +1,23 @@
-from apps.utils import PhoneFormatter
+from apps.utils import Formatter
 
 
-class WebhookSerializer(PhoneFormatter):
+class WebhookSerializer(Formatter):
     """Сериализация данных, полученных в вебхуке"""
 
-    def serialize(self, data):
+    def serialize(self, data: dict) -> tuple:
         """Сериализация входящих данных из вебхука тильды"""
 
-        name_parts = data["Name"].split()
+        last_name, first_name, patronymic_name = self.format_full_namme(data["Name"])
+        phone = self.format_phone(data["Phone"])
+        email = self.format_email(data["Email"])
+        payment_amount = self.format_payment(data["payment"]["amount"])
+        order_number = data["payment"]["orderid"]
+        products_data = data["payment"]["products"]
 
-        phone = self.get_phone(data["Phone"])
-        email = data["Email"]
-        if email.endswith("gmail.ru"):
-            email = email.replace("gmail.ru", "gmail.com")
+        order_dict = self.create_order_dict(order_number, payment_amount)
+        products_dict = self.create_products_dict(products_data)
+        customer_dict = self.create_customer_dict(
+            first_name, last_name, patronymic_name, email, phone
+        )
 
-        customer = {
-            "customer": {
-                "last_name": name_parts[0] if len(name_parts) >= 1 else "",
-                "first_name": name_parts[1] if len(name_parts) >= 2 else "",
-                "patronymic_name": name_parts[2] if len(name_parts) == 3 else "",
-                "email": email,
-                "phone_number": phone,
-            }
-        }
-
-        payment_amount = data["payment"]["amount"].replace(',', '.')
-        order = {
-            "order": {
-                "order_number": data["payment"]["orderid"],
-                "payment_amount": int(float(payment_amount)),
-            }
-        }
-
-        products = {"products": []}
-
-        for product_data in data["payment"]["products"]:
-            product = {
-                "article": product_data["sku"],
-                "quantity": product_data["quantity"],
-            }
-            products["products"].append(product)
-
-        return customer, order, products
+        return customer_dict, order_dict, products_dict
