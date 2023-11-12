@@ -69,9 +69,9 @@ class Formatter:
 
         full_name = name.split()
 
-        last_name = full_name[0] if len(full_name) >= 1 else "",
-        first_name = full_name[1] if len(full_name) >= 2 else "",
-        patronymic_name = full_name[2] if len(full_name) == 3 else "",
+        last_name = full_name[0] if len(full_name) >= 1 else ""
+        first_name = full_name[1] if len(full_name) >= 2 else ""
+        patronymic_name = full_name[2] if len(full_name) == 3 else ""
         return last_name, first_name, patronymic_name
 
     @staticmethod
