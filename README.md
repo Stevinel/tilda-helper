@@ -37,6 +37,7 @@ Previously, the owner had to manually execute this entire workflow, a tedious pr
 - Docker-compose
 - Nginx
 - Celery
+- Flower
 - Sentry
 - Postgres
 
@@ -77,4 +78,10 @@ Previously, the owner had to manually execute this entire workflow, a tedious pr
     SENTRY_DNS='your sentry link'
     
     ALLOWED_CHATS='your_tg_ids'
+   
+   FLOWER_USER='user'
+   FLOWER_PASS='pass'
+   
+   EMAIL_SENDER='email'
+   EMAIL_SENDER_TOKEN='token'
    ```
