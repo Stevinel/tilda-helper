@@ -106,7 +106,7 @@ services:
   flower:
     container_name: flower
     build: ./backend
-    command: celery flower -E tasks --broker=${CELERY_BROKER} --basic_auth=${FLOWER_USER}:${FLOWER_PASS} --without-gossip
+    command: celery flower --basic_auth=${FLOWER_USER}:${FLOWER_PASS} --port=6666
     environment:
       - CELERY_BROKER_URL=${CELERY_BROKER}
       - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
