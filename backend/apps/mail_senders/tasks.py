@@ -15,6 +15,8 @@ from celery.utils.log import get_task_logger
 from django.template.loader import render_to_string
 from sentry_sdk import capture_message
 
+from config import settings
+
 logger = get_task_logger(__name__)
 
 
@@ -25,7 +27,6 @@ API_KEY = os.getenv("API_KEY")
 @shared_task(bind=True, autoretry_for=(Exception,), retry_backoff=5, retry_kwargs={'max_retries': 5})
 def send_mail(self, data: dict):
     """Отправка писем с товарами из заказа"""
-
     client = Customer.objects.filter(id=data["customer"]).first()
     products = Pattern.objects.filter(article__in=data["products"])
     full_name = Formatter.get_full_name_by_parts(client)
@@ -78,9 +79,13 @@ def send_mail(self, data: dict):
 def send_many_mails(self, data: dict):
     """Массовая рассылка клиентам"""
 
-    clients = Customer.objects.filter(is_receive_mails=True)
-    sender = os.getenv("EMAIL")
-    email_token = os.getenv("EMAIL_TOKEN")
+    if settings.DEBUG:
+        clients = Customer.objects.filter(email='test@test.ru')
+    else:
+        clients = Customer.objects.filter(is_receive_mails=True)
+
+    sender = os.getenv("EMAIL_SENDER")
+    email_token = os.getenv("EMAIL_SENDER_TOKEN")
     email_subject = data["subject"]
     email_content = data["content"]
 

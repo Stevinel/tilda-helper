@@ -100,7 +100,23 @@ services:
       - static_value:/usr/src/app/static/
       - media_value:/usr/src/app/media/
     <<: *default-environment
-    command: celery -A config worker -l error -c 2
+    command: celery -A config worker -l info -E -c 2
+
+
+  flower:
+    container_name: flower
+    build: ./backend
+    command: celery flower -E tasks --broker=${CELERY_BROKER} --basic_auth=${FLOWER_USER}:${FLOWER_PASS} --without-gossip
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+      - FLOWER_PORT=6666
+    expose:
+      - 6666
+    depends_on:
+      - redis
+      - celery
+    restart: always
 
 
   tgbot:
