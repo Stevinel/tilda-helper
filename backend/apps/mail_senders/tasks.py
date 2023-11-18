@@ -5,9 +5,10 @@ import smtplib
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from time import sleep
 
 from apps.customers.models import Customer
-from apps.utils import MessageSender
+from apps.utils import MessageSender, Formatter
 from apps.products.models import Pattern
 from celery import shared_task
 from celery.utils.log import get_task_logger
@@ -22,12 +23,12 @@ API_KEY = os.getenv("API_KEY")
 
 
 @shared_task(bind=True, autoretry_for=(Exception,), retry_backoff=5, retry_kwargs={'max_retries': 5})
-def send_mail(self, data):
-    """Отправка файлов по товарам из заказа"""
+def send_mail(self, data: dict):
+    """Отправка писем с товарами из заказа"""
 
     client = Customer.objects.filter(id=data["customer"]).first()
     products = Pattern.objects.filter(article__in=data["products"])
-    full_name = " ".join([client.last_name, client.first_name, client.patronymic_name]).rstrip()
+    full_name = Formatter.get_full_name_by_parts(client)
 
     if not products:
         return MessageSender().send_error_message(f"Не найдены товары для клиента {full_name}")
@@ -69,5 +70,46 @@ def send_mail(self, data):
             f"Ошибка отправки письма: {error}\n"
             f"Заказ не будет доставлен на почту {client.email}"
         )
-        return capture_message(f"Mail error: {e}")
+        return capture_message(f"Mail send error: {e}")
     MessageSender().send_success_message(f"Заказ успешно отправлен на почту: {client.email}")
+
+
+@shared_task(bind=True, autoretry_for=(Exception,), retry_backoff=5, retry_kwargs={'max_retries': 5})
+def send_many_mails(self, data: dict):
+    """Массовая рассылка клиентам"""
+
+    clients = Customer.objects.filter(is_receive_mails=True)
+    sender = os.getenv("EMAIL")
+    email_token = os.getenv("EMAIL_TOKEN")
+    email_subject = data["subject"]
+    email_content = data["content"]
+
+    server = smtplib.SMTP_SSL("smtp.mail.ru", 465)
+    server.login(sender, email_token)
+
+    counter_success, counter_fails = 0, 0
+
+    for client in clients:
+        message = MIMEMultipart('alternative')
+        message['Content-Type'] = 'text/html; charset=utf-8'
+        message["From"] = "{} <{}>".format("Hush Time", sender)
+        message["Subject"] = email_subject
+
+        html = render_to_string("email_for_all.html", context={"html_data": email_content})
+        message.attach(MIMEText(html, "html", "utf-8"))
+
+        try:
+            server.sendmail(sender, client.email, message.as_string())
+            counter_success += 1
+        except Exception as e:
+            counter_fails += 1
+            capture_message(f"Mail sender error: {e}")
+            continue
+        sleep(1)
+
+    MessageSender().send_success_message(
+        f"Рассылка '{email_subject}' завершена\n"
+        f"Кол-во отправленных писем: {counter_success}\n"
+        f"Кол-во неотправленных писем: {counter_fails}\n"
+    )
+    server.quit()

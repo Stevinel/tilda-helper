@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import CharField, EmailField, PositiveIntegerField
+from django.db.models import BooleanField, CharField, EmailField, PositiveIntegerField
 
 
 class Customer(models.Model):
@@ -10,6 +10,7 @@ class Customer(models.Model):
     last_name = CharField("Фамилия", max_length=150, blank=True)
     patronymic_name = CharField("Отчество", max_length=150, blank=True)
     phone_number = CharField("Телефон", max_length=20, blank=True)
+    is_receive_mails = BooleanField("Получает рассылку", default=True)
 
     sum_old_orders = PositiveIntegerField("Сумма старых заказов из таблиц", blank=True, null=True)
 

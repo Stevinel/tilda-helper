@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "apps.products",
     "apps.customers",
     "apps.orders",
+    "apps.mail_senders",
     "django_admin_inline_paginator",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "axes",
+    "ckeditor",
 ]
 
 MIDDLEWARE = [
@@ -54,12 +56,18 @@ AXES_LOCKOUT_URL = "https://go-friend-go.narod.ru/"
 ROOT_URLCONF = "config.urls"
 
 EMAIL_TEMPLATE_DIR = os.path.join(BASE_DIR, "templates/email/")
+EMAIL_FOR_ALL_TEMPLATE_DIR = os.path.join(BASE_DIR, "templates/email_for_all/")
 ORDER_ADMIN_TEMPLATE_DIR = os.path.join(BASE_DIR, "templates/admin/orders/Order/")
 BASE_TEMPLATES_DIRS = BASE_DIR / "backend/templates"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_TEMPLATES_DIRS, EMAIL_TEMPLATE_DIR, ORDER_ADMIN_TEMPLATE_DIR],
+        "DIRS": [
+            BASE_TEMPLATES_DIRS,
+            EMAIL_TEMPLATE_DIR,
+            ORDER_ADMIN_TEMPLATE_DIR,
+            EMAIL_FOR_ALL_TEMPLATE_DIR,
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -118,7 +126,7 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = "/static/"
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 MEDIA_URL = "/media/"
@@ -159,3 +167,60 @@ warnings.filterwarnings(
     module='django.db.models.fields',
 )
 
+
+CKEDITOR_UPLOAD_PATH = "ckeditor/"
+CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
+CKEDITOR_CONFIGS = {
+    'default': {
+        'skin': 'moono',
+        'toolbar_Basic': [
+            ['Source', '-', 'Bold', 'Italic']
+        ],
+        'toolbar_YourCustomToolbarConfig': [
+            {'name': 'document', 'items': ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates']},
+            {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']},
+            {'name': 'editing', 'items': ['Find', 'Replace', '-', 'SelectAll']},
+            {'name': 'forms',
+             'items': ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
+                       'HiddenField']},
+            '/',
+            {'name': 'basicstyles',
+             'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat']},
+            {'name': 'paragraph',
+             'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-',
+                       'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl',
+                       'Language']},
+            {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
+            {'name': 'insert',
+             'items': ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']},
+            '/',
+            {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
+            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
+            {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']},
+            {'name': 'about', 'items': ['About']},
+            '/',
+            {'name': 'yourcustomtools', 'items': [
+                'Preview',
+                'Maximize',
+                'Youtube',
+            ]},
+        ],
+        'toolbar': 'YourCustomToolbarConfig',
+        'tabSpaces': 4,
+        'extraPlugins': ','.join([
+            'uploadimage',
+            'div',
+            'autolink',
+            'autoembed',
+            'embedsemantic',
+            'autogrow',
+            'widget',
+            'lineutils',
+            'clipboard',
+            'dialog',
+            'dialogui',
+            'elementspath',
+            'youtube',
+        ]),
+    }
+}

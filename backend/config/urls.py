@@ -11,6 +11,7 @@ ADMIN_URL = os.getenv("ADMIN_URL")
 urlpatterns = [
     path(ADMIN_URL, admin.site.urls),
     path("", include("apps.orders.urls")),
+    path("ckeditor/", include("ckeditor_uploader.urls")),
 ]
 
 admin.site.site_header = "Hush Time Administrator"

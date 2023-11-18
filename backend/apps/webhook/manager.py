@@ -2,7 +2,7 @@ from django.db import transaction
 from django.db import IntegrityError, OperationalError
 
 from ..customers.models import Customer
-from ..mail_sender.tasks import send_mail
+from ..mail_senders.tasks import send_mail
 from ..orders.models import Order
 from ..products.models import Pattern
 from ..utils import MessageSender

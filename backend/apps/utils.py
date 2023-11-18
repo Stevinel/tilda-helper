@@ -4,6 +4,8 @@ import re
 import requests
 from sentry_sdk import capture_message
 
+from apps.customers.models import Customer
+
 API_NAME = os.getenv("API_NAME")
 API_KEY = os.getenv("API_KEY")
 TG_BOT_URL = "http://tgbot:5555"
@@ -133,3 +135,9 @@ class Formatter:
                 }
             products["products"].append(product)
         return products
+
+    @staticmethod
+    def get_full_name_by_parts(client: Customer) -> tuple:
+        """Получение ФИО по частям"""
+
+        return " ".join([client.last_name, client.first_name, client.patronymic_name]).rstrip()
