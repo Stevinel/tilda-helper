@@ -9,7 +9,7 @@ django.setup()
 
 import docker
 import telebot
-from apps.webhook.manager import DataManager
+from apps.orders.manager import DataManager
 from django.conf import settings
 from django.http import JsonResponse
 from sentry_sdk import capture_exception

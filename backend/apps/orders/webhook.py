@@ -3,8 +3,8 @@ import os
 from functools import wraps
 
 from apps.utils import MessageSender
-from apps.webhook.manager import DataManager
-from apps.webhook.serializers import WebhookSerializer
+from apps.orders.manager import DataManager
+from apps.orders.serializers import WebhookSerializer
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -52,4 +52,3 @@ class WebhookView(View):
         manager = DataManager(customer, order, products)
         manager.save_data()
         return JsonResponse({})
-

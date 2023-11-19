@@ -1,4 +1,4 @@
-from apps.webhook.webhook import WebhookView
+from apps.orders.webhook import WebhookView
 from django.urls import path
 
 

@@ -1,11 +1,11 @@
 from django.db import transaction
 from django.db import IntegrityError, OperationalError
 
-from ..customers.models import Customer
-from ..mail_senders.tasks import send_mail
-from ..orders.models import Order
-from ..products.models import Pattern
-from ..utils import MessageSender
+from apps.customers.models import Customer
+from apps.mail_senders.tasks import send_mail
+from apps.orders.models import Order
+from apps.products.models import Pattern
+from apps.utils import MessageSender
 
 from sentry_sdk import capture_exception
 
