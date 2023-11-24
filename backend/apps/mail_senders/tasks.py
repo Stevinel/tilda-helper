@@ -75,7 +75,14 @@ def send_mail(self, data: dict):
     MessageSender().send_success_message(f"Заказ успешно отправлен на почту: {client.email}")
 
 
-@shared_task(bind=True, autoretry_for=(Exception,), retry_backoff=5, retry_kwargs={'max_retries': 5})
+@shared_task(
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+    retry_backoff_max=3600,
+    retry_kwargs={'max_retries': 5},
+    rate_limit='40/m'
+)
 def send_many_mails(self, data: dict):
     """Массовая рассылка клиентам"""
 
@@ -98,6 +105,11 @@ def send_many_mails(self, data: dict):
 
     try:
         server.sendmail(sender, client_email, message.as_string())
+    except smtplib.SMTPResponseException as e:
+        if e.smtp_code == 451 and b'Ratelimit exceeded' in e.smtp_error:
+            raise self.retry(exc=e, countdown=3600)
+        else:
+            capture_message(f"Mail sender error: {e}")
     except Exception as e:
         capture_message(f"Mail sender error: {e}")
 
