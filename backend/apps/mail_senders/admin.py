@@ -3,9 +3,13 @@ from django.contrib import admin, messages
 
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.utils.translation import ngettext
+from sentry_sdk import capture_message
 
+from config import settings
 from .models import MailSender
 from .tasks import send_many_mails
+from ..customers.models import Customer
+from ..utils import MessageSender
 
 
 class MailSenderForm(forms.ModelForm):
@@ -34,12 +38,28 @@ class MailSenderAdmin(admin.ModelAdmin):
             )
             return
 
+        if settings.DEBUG:
+            clients = Customer.objects.filter(email='test@test.ru')
+        else:
+            clients = Customer.objects.filter(is_receive_mails=True)
+
         for sender in queryset:
-            data = {
-                "subject": sender.subject,
-                "content": sender.content,
-            }
-            send_many_mails.delay(data)
+
+            MessageSender().send_success_message(f"Начинаю рассылку - '{sender.subject}'")
+
+            for client in clients:
+                try:
+                    data = {
+                        "subject": sender.subject,
+                        "content": sender.content,
+                        "client_email": client.email
+                    }
+                    send_many_mails.delay(data)
+                except Exception as e:
+                    capture_message(f"Mail sender error: {e}")
+                    continue
+
+        MessageSender().send_success_message(f"Будет отправлено: {clients.count()} писем")
 
         message = ngettext(
             'Рассылка запущена для %(count)d MailSender.',

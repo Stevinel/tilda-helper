@@ -79,47 +79,26 @@ def send_mail(self, data: dict):
 def send_many_mails(self, data: dict):
     """Массовая рассылка клиентам"""
 
-    if settings.DEBUG:
-        clients = Customer.objects.filter(email='test@test.ru')
-    else:
-        clients = Customer.objects.filter(is_receive_mails=True)
-
     sender = os.getenv("EMAIL_SENDER")
     email_token = os.getenv("EMAIL_SENDER_TOKEN")
     email_subject = data["subject"]
     email_content = data["content"]
+    client_email = data["client_email"]
 
     server = smtplib.SMTP_SSL("smtp.mail.ru", 465)
     server.login(sender, email_token)
 
-    counter_success, counter_fails = 0, 0
+    message = MIMEMultipart('alternative')
+    message['Content-Type'] = 'text/html; charset=utf-8'
+    message["From"] = "{} <{}>".format("Hush Time", sender)
+    message["Subject"] = email_subject
 
-    MessageSender().send_success_message(f"Начинаю рассылку - '{email_subject}'")
+    html = render_to_string("email_for_all.html", context={"html_data": email_content})
+    message.attach(MIMEText(html, "html", "utf-8"))
 
-    for client in clients:
-        message = MIMEMultipart('alternative')
-        message['Content-Type'] = 'text/html; charset=utf-8'
-        message["From"] = "{} <{}>".format("Hush Time", sender)
-        message["Subject"] = email_subject
+    try:
+        server.sendmail(sender, client_email, message.as_string())
+    except Exception as e:
+        capture_message(f"Mail sender error: {e}")
 
-        html = render_to_string("email_for_all.html", context={"html_data": email_content})
-        message.attach(MIMEText(html, "html", "utf-8"))
-
-        try:
-            server.sendmail(sender, client.email, message.as_string())
-            counter_success += 1
-
-            if counter_success % 100 == 0:
-                MessageSender().send_success_message(f"Успешно отправлено: {counter_success} писем")
-        except Exception as e:
-            counter_fails += 1
-            capture_message(f"Mail sender error: {e}")
-            continue
-        sleep(1)
-
-    MessageSender().send_success_message(
-        f"Рассылка '{email_subject}' завершена\n"
-        f"Кол-во отправленных писем: {counter_success}\n"
-        f"Кол-во неотправленных писем: {counter_fails}\n"
-    )
     server.quit()
