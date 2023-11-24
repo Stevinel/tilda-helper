@@ -108,6 +108,9 @@ def send_many_mails(self, data: dict):
         try:
             server.sendmail(sender, client.email, message.as_string())
             counter_success += 1
+
+            if counter_success % 100 == 0:
+                MessageSender().send_success_message(f"Успешно отправлено: {counter_success} писем")
         except Exception as e:
             counter_fails += 1
             capture_message(f"Mail sender error: {e}")
