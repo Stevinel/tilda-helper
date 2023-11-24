@@ -23,6 +23,8 @@ x-environment-defaults: &default-environment
     - SENTRY_DNS
     - DNS
     - ALLOWED_CHATS
+    - EMAIL_SENDER
+    - EMAIL_SENDER_TOKEN
 
 
 services:

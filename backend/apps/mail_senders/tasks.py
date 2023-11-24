@@ -94,6 +94,8 @@ def send_many_mails(self, data: dict):
 
     counter_success, counter_fails = 0, 0
 
+    MessageSender().send_success_message(f"Начинаю рассылку - '{email_subject}'")
+
     for client in clients:
         message = MIMEMultipart('alternative')
         message['Content-Type'] = 'text/html; charset=utf-8'
