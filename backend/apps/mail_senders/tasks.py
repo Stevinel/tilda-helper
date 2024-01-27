@@ -81,7 +81,7 @@ def send_mail(self, data: dict):
     retry_backoff=True,
     retry_backoff_max=3600,
     retry_kwargs={'max_retries': 5},
-    rate_limit='40/m'
+    rate_limit='20/m'
 )
 def send_many_mails(self, data: dict):
     """Массовая рассылка клиентам"""
