@@ -69,9 +69,6 @@ jobs:
     environment:
       name: ${{ (github.ref == 'refs/heads/develop') && 'test' || 'main' }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
