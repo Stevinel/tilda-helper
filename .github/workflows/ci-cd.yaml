@@ -33,8 +33,6 @@ env:
   FLOWER_USER: ${{ secrets.FLOWER_USER }}
   FLOWER_PASS: ${{ secrets.FLOWER_PASS }}
   FLOWER_URL_PREFIX: ${{ secrets.FLOWER_URL_PREFIX }}
-  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   ENV_VARS: ${{ secrets.ENV_VARS }}
   PROJECT_PATH : ${{ secrets.PROJECT_PATH }}
 
@@ -55,29 +53,6 @@ jobs:
           docker-compose -f docker-compose.yaml build
           docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm backend /bin/sh -c "python manage.py test -v3 --noinput"
 
-  push_to_registry:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    environment:
-      name: ${{ (github.ref == 'refs/heads/develop') && 'test' || 'main' }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: ./backend
-          file: ./backend/Dockerfile
-          push: true
-          tags: stevinel/tilda-helper:latest
-
   deploy:
     needs: push_to_registry
     runs-on: ubuntu-latest
@@ -93,10 +68,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
-          script: |
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            cd ${{ secrets.PROJECT_PATH }}
-            scp docker-compose.yaml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ secrets.PROJECT_PATH }}
-            echo "${{ secrets.ENV_VARS }}" | tr ';' '\n' > .env
-            docker pull stevinel/tilda-helper:latest
+          script: | 
+            git pull
             docker compose up -d --build
+            docker system prune -fa
