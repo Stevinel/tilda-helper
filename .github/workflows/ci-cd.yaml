@@ -72,13 +72,15 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./Dockerfile
+          file: ./backend/Dockerfile
           push: true
           tags: stevinel/tilda-helper:latest
 
   deploy:
     needs: push_to_registry
     runs-on: ubuntu-latest
+    environment:
+      name: ${{ (github.ref == 'refs/heads/develop') && 'test' || 'main' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
