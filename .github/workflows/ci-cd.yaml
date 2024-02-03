@@ -95,8 +95,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            cat docker-compose.yaml | ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'cat > ${{ secrets.PROJECT_PATH }}/docker-compose.yaml'
-            ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}
+            scp docker-compose.yaml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ secrets.PROJECT_PATH }}
             cd ${{ secrets.PROJECT_PATH }}
             echo "${{ secrets.ENV_VARS }}" | tr ';' '\n' > .env
             docker pull stevinel/tilda-helper:latest
