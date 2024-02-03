@@ -36,7 +36,6 @@ jobs:
       FLOWER_USER: ${{ secrets.FLOWER_USER }}
       FLOWER_PASS: ${{ secrets.FLOWER_PASS }}
       FLOWER_URL_PREFIX: ${{ secrets.FLOWER_URL_PREFIX }}
-      CSRF_TRUSTED_ORIGINS: ${{ secrets.CSRF_TRUSTED_ORIGINS }}
     environment:
       name: ${{ (github.ref == 'refs/heads/develop') && 'test' || 'main' }}
     steps:
