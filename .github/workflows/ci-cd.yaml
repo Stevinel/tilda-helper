@@ -100,4 +100,3 @@ jobs:
             echo "${{ secrets.ENV_VARS }}" | tr ';' '\n' > .env
             docker pull stevinel/tilda-helper:latest
             docker-compose up -d --build
-            EOF
