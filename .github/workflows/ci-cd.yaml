@@ -94,4 +94,4 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull stevinel/tilda-helper:latest
-            docker-compose up -d --build}
+            docker-compose up -d --build
