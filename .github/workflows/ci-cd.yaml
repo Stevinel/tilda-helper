@@ -56,6 +56,8 @@ jobs:
   push_to_registry:
     needs: build-and-test
     runs-on: ubuntu-latest
+    environment:
+      name: ${{ (github.ref == 'refs/heads/develop') && 'test' || 'main' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
