@@ -71,7 +71,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./backend
           file: ./backend/Dockerfile
           push: true
           tags: stevinel/tilda-helper:latest
