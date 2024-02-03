@@ -26,7 +26,8 @@ jobs:
 
       - name: Print environment variable names
         run: |
-            echo "{{ env.ALLOWED_HOSTS }}"
+            echo ${{ env.ALLOWED_HOSTS }}
+            echo ${{ secrets.ALLOWED_HOSTS }}
 
       - name: Build, push Docker images, and run tests
         run: |
