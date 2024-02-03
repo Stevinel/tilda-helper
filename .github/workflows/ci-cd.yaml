@@ -37,7 +37,7 @@ env:
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
 jobs:
-  build:
+  setup:
     runs-on: ubuntu-latest
     environment:
       name: ${{ (github.ref == 'refs/heads/develop') && 'test' || 'main' }}
@@ -48,7 +48,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Build Docker images and run tests
