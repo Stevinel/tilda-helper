@@ -26,9 +26,9 @@ jobs:
 
       - name: Build, push Docker images, and run tests
         run: |
-          docker-compose -f docker-compose.yml build
-          docker-compose -f docker-compose.yml push
-          docker-compose -f docker-compose.yml -f docker-compose.test.yml run --rm backend /bin/sh -c "python manage.py test -v3 --noinput"
+          docker-compose -f docker-compose.yaml build
+          docker-compose -f docker-compose.yaml push
+          docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm backend /bin/sh -c "python manage.py test -v3 --noinput"
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
