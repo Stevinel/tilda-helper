@@ -96,6 +96,7 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             cd ${{ secrets.PROJECT_PATH }}
+            scp docker-compose.yaml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ secrets.PROJECT_PATH }}
             echo "${{ secrets.ENV_VARS }}" | tr ';' '\n' > .env
             docker pull stevinel/tilda-helper:latest
-            docker-compose up -d --build
+            docker compose up -d --build
