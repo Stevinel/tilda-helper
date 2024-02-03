@@ -6,36 +6,39 @@ on:
       - main
       - develop
 
+env:
+  DB_PASS: ${{ secrets.DB_PASS }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  DB_HOST: ${{ secrets.DB_HOST }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  DEBUG: ${{ secrets.DEBUG }}
+  DOMAIN: ${{ secrets.DOMAIN }}
+  DNS: ${{ secrets.DNS }}
+  CSRF_TRUSTED_DOMAINS: ${{ secrets.CSRF_TRUSTED_DOMAINS }}
+  ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+  CORS_ORIGIN_WHITELIST: ${{ secrets.CORS_ORIGIN_WHITELIST }}
+  TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+  TARGET_CHAT_ID: ${{ secrets.TARGET_CHAT_ID }}
+  ALLOWED_CHATS: ${{ secrets.ALLOWED_CHATS }}
+  API_NAME: ${{ secrets.API_NAME }}
+  API_KEY: ${{ secrets.API_KEY }}
+  ADMIN_URL: ${{ secrets.ADMIN_URL }}
+  EMAIL: ${{ secrets.EMAIL }}
+  EMAIL_TOKEN: ${{ secrets.EMAIL_TOKEN }}
+  CELERY_BROKER: ${{ secrets.CELERY_BROKER }}
+  SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
+  CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}
+  FLOWER_USER: ${{ secrets.FLOWER_USER }}
+  FLOWER_PASS: ${{ secrets.FLOWER_PASS }}
+  FLOWER_URL_PREFIX: ${{ secrets.FLOWER_URL_PREFIX }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
-    env:
-      DB_PASS: ${{ secrets.DB_PASS }}
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_NAME: ${{ secrets.DB_NAME }}
-      DB_PORT: ${{ secrets.DB_PORT }}
-      DB_HOST: ${{ secrets.DB_HOST }}
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      DEBUG: ${{ secrets.DEBUG }}
-      DOMAIN: ${{ secrets.DOMAIN }}
-      DNS: ${{ secrets.DNS }}
-      CSRF_TRUSTED_DOMAINS: ${{ secrets.CSRF_TRUSTED_DOMAINS }}
-      ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
-      CORS_ORIGIN_WHITELIST: ${{ secrets.CORS_ORIGIN_WHITELIST }}
-      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-      TARGET_CHAT_ID: ${{ secrets.TARGET_CHAT_ID }}
-      ALLOWED_CHATS: ${{ secrets.ALLOWED_CHATS }}
-      API_NAME: ${{ secrets.API_NAME }}
-      API_KEY: ${{ secrets.API_KEY }}
-      ADMIN_URL: ${{ secrets.ADMIN_URL }}
-      EMAIL: ${{ secrets.EMAIL }}
-      EMAIL_TOKEN: ${{ secrets.EMAIL_TOKEN }}
-      CELERY_BROKER: ${{ secrets.CELERY_BROKER }}
-      SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
-      CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}
-      FLOWER_USER: ${{ secrets.FLOWER_USER }}
-      FLOWER_PASS: ${{ secrets.FLOWER_PASS }}
-      FLOWER_URL_PREFIX: ${{ secrets.FLOWER_URL_PREFIX }}
     environment:
       name: ${{ (github.ref == 'refs/heads/develop') && 'test' || 'main' }}
     steps:
@@ -45,10 +48,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Build Docker images and run tests
-        run: |
-          docker-compose -f docker-compose.yaml build
-          docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm backend /bin/sh -c "python manage.py test -v3 --noinput"
+  test:
+    - name: Build Docker images and run tests
+      run: |
+        docker-compose -f docker-compose.yaml build
+        docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm backend /bin/sh -c "python manage.py test -v3 --noinput"
 
   push_to_registry:
     needs: build-and-test
