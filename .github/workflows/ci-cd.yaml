@@ -93,5 +93,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            cd ${{ secrets.PROJECT_PATH }}
             docker pull stevinel/tilda-helper:latest
             docker-compose up -d --build
+            docker system prune -fa
