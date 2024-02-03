@@ -54,7 +54,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: /backend/Dockerfile
+          file: ./backend/Dockerfile
           push: True
           tags: stevinel/tilda-helper:latest
         env:
