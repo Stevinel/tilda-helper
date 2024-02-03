@@ -94,9 +94,23 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            # Вход в Docker
+            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+            
+            # Передача содержимого docker-compose.yaml на сервер и создание файла
+            echo "Creating docker-compose.yaml on the server..."
+            cat docker-compose.yaml | ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'cat > ${{ secrets.PROJECT_PATH }}/docker-compose.yaml'
+            
+            # SSH команды для выполнения на сервере
+            ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
             cd ${{ secrets.PROJECT_PATH }}
-            docker pull stevinel/tilda-helper:latest
-            scp -o StrictHostKeyChecking=no docker-compose.yaml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ secrets.PROJECT_PATH }}
+            
+            # Создание .env файла на сервере
+            echo "Creating .env file..."
             echo "${{ secrets.ENV_VARS }}" | tr ';' '\n' > .env
+            
+            # Загрузка Docker образа и запуск Docker Compose
+            echo "Pulling Docker image and starting services..."
+            docker pull stevinel/tilda-helper:latest
             docker-compose up -d --build
+            EOF
