@@ -161,8 +161,3 @@ volumes:
   postgresql-data:
   static_value:
   media_value:
-
-
-networks:
-  my_network:
-    driver: bridge
