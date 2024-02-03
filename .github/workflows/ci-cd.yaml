@@ -53,7 +53,7 @@ jobs:
 
       - name: Build, push Docker images, and run tests
         run: |
-          docker-compose -f docker-compose.yaml --build
+          docker-compose -f docker-compose.yaml build
           docker-compose -f docker-compose.yaml push
           docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm backend /bin/sh -c "python manage.py test -v3 --noinput"
         env:
