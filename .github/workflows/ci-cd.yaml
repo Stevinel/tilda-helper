@@ -49,6 +49,7 @@ jobs:
         uses: docker/setup-buildx-action@v1
 
   build-and-test:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Build Docker images and run tests
