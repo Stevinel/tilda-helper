@@ -4,6 +4,10 @@ x-backend_environment: &backend_environment
   environment:
     - DEBUG=False
     - SECRET_KEY=secrettestkey
+    - DB_NAME=postgres
+    - DB_USER=postgres
+    - DB_HOST=postgres
+    - DB_PORT=5432
 
 services:
   postgres:
@@ -12,7 +16,7 @@ services:
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=testpassword
+      - POSTGRES_PASSWORD=postgres
 
   redis:
     restart: unless-stopped
