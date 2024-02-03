@@ -26,8 +26,14 @@ jobs:
 
       - name: Print environment variable names
         run: |
-            echo ${{ env.ALLOWED_HOSTS }}
-            echo ${{ secrets.ALLOWED_HOSTS }}
+          echo "DB_PASS is set: ${{ env.DB_PASS != '' }}"
+          echo "DB_USER is set: ${{ env.DB_USER != '' }}"
+          echo "DB_NAME is set: ${{ env.DB_NAME != '' }}"
+          echo "DB_HOST is set: ${{ env.DB_HOST != '' }}"
+          echo "FLOWER_USER is set: ${{ env.FLOWER_USER != '' }}"
+          echo "FLOWER_PASS is set: ${{ env.FLOWER_PASS != '' }}"
+          echo "CELERY_BROKER is set: ${{ env.CELERY_BROKER != '' }}"
+          echo "CELERY_RESULT_BACKEND is set: ${{ env.CELERY_RESULT_BACKEND != '' }}"
 
       - name: Build, push Docker images, and run tests
         run: |
