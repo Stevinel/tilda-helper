@@ -51,10 +51,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Print environment variable names
-        run: |
-          echo "DOCKER_USERNAME is set: ${{ env.DOCKER_USERNAME != '' }}"
-
       - name: Build, push Docker images, and run tests
         run: |
           docker-compose -f docker-compose.yaml build
