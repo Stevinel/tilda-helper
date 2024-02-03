@@ -49,10 +49,12 @@ jobs:
         uses: docker/setup-buildx-action@v1
 
   test:
-    - name: Build Docker images and run tests
-      run: |
-        docker-compose -f docker-compose.yaml build
-        docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm backend /bin/sh -c "python manage.py test -v3 --noinput"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Docker images and run tests
+        run: |
+          docker-compose -f docker-compose.yaml build
+          docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm backend /bin/sh -c "python manage.py test -v3 --noinput"
 
   push_to_registry:
     needs: build-and-test
