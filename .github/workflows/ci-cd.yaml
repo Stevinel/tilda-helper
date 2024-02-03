@@ -95,4 +95,3 @@ jobs:
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull stevinel/tilda-helper:latest
             docker-compose up -d --build
-            docker system prune -fa
