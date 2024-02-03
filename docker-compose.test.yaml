@@ -4,10 +4,6 @@ x-backend_environment: &backend_environment
   environment:
     - DEBUG=False
     - SECRET_KEY=secrettestkey
-    - DB_NAME=postgres
-    - DB_USER=postgres
-    - DB_HOST=postgres
-    - DB_PORT=5432
 
 services:
   postgres:
