@@ -35,6 +35,7 @@ env:
   FLOWER_URL_PREFIX: ${{ secrets.FLOWER_URL_PREFIX }}
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  ENV_VARS: ${{ secrets.ENV_VARS }}
 
 jobs:
   build-and-test:
@@ -95,5 +96,5 @@ jobs:
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             cd ${{ secrets.PROJECT_PATH }}
             docker pull stevinel/tilda-helper:latest
+            echo "${{ secrets.ENV_VARS }}" | tr ';' '\n' > .env
             docker-compose up -d --build
-            docker system prune -fa
