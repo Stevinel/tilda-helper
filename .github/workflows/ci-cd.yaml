@@ -54,7 +54,7 @@ jobs:
           docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm backend /bin/sh -c "python manage.py test -v3 --noinput"
 
   deploy:
-    needs: push_to_registry
+    needs: build-and-test
     runs-on: ubuntu-latest
     environment:
       name: ${{ (github.ref == 'refs/heads/develop') && 'test' || 'main' }}
