@@ -157,16 +157,6 @@ services:
       - media_value:/usr/src/app/media
 
 
-#  test:
-#    build: ./backend
-#    command: python manage.py test
-#    volumes:
-#      - ./backend:/usr/src/app
-#    depends_on:
-#      - postgres
-#    <<: *default-environment
-
-
 volumes:
   postgresql-data:
   static_value:

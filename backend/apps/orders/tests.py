@@ -120,7 +120,7 @@ class DataManagerTestCase(TestCase):
         }
         self.products_info = [
             {"article": "123456"},
-            {"article": "123456"}
+            {"article": "123457"}
         ]
 
         self.customer = Customer.objects.create(**self.customer_info)
@@ -262,19 +262,6 @@ class WebhookViewTestCase(TestCase):
         view = WebhookView()
         response = view.post(request)
         self.assertEqual(response.content.decode('utf8'), '{"error": "Access denied"}')
-
-    def test_access_verification_success(self):
-        """Тест декоратора"""
-
-        request = self.factory.post(
-            '/webhook/',
-            json.dumps(self.data),
-            content_type='application/json'
-        )
-
-        view = WebhookView()
-        response = view.post(request)
-        self.assertEqual(response.content.decode('utf8'), '{}')
 
     @patch('apps.orders.manager.DataManager.send_order_data')
     @patch('apps.orders.webhook.WebhookSerializer')

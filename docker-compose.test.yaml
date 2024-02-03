@@ -1,0 +1,42 @@
+version: '3.6'
+
+x-backend_environment: &backend_environment
+  environment:
+    - DEBUG=False
+    - SECRET_KEY=secrettestkey
+    - DB_NAME=postgres
+    - DB_USER=postgres
+    - DB_HOST=postgres
+    - DB_PORT=5432
+
+services:
+  postgres:
+    image: postgres:14.3-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=testpassword
+
+  redis:
+    restart: unless-stopped
+
+  backend:
+    restart: unless-stopped
+    command: sh -c "/tmp/entrypoint.test.sh"
+    <<: *backend_environment
+    depends_on:
+      - postgres
+      - redis
+
+  celery:
+    build: ./backend
+    restart: unless-stopped
+    command: celery -A config worker -l error -E -c 2
+    <<: *backend_environment
+    depends_on:
+      - backend
+      - redis
+
+  nginx:
+    restart: unless-stopped

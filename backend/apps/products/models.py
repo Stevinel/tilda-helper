@@ -5,7 +5,7 @@ from django.db.models import CharField, DateTimeField, FileField, ImageField, Po
 class Product(models.Model):
     """Абстрактная модель товара"""
 
-    article = PositiveIntegerField("Артикул", blank=False, db_index=True)
+    article = PositiveIntegerField("Артикул", blank=False, db_index=True, unique=True)
     name = CharField("Название", max_length=256)
     description = CharField("Краткое описание", blank=True)
     price = PositiveIntegerField("Цена")
