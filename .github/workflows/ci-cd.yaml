@@ -64,7 +64,7 @@ jobs:
           args: --config, backend/ruff.toml
 
   deploy:
-    needs: build-and-test
+    needs: ruff
     runs-on: ubuntu-latest
     environment:
       name: ${{ (github.ref == 'refs/heads/develop') && 'test' || 'main' }}
