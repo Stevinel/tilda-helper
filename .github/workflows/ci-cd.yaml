@@ -7,7 +7,7 @@ on:
       - develop
 
 jobs:
-  build-push-and-test:
+  build-and-test:
     runs-on: ubuntu-latest
     env:
       DB_PASS: ${{ secrets.DB_PASS }}
@@ -50,31 +50,33 @@ jobs:
           docker-compose -f docker-compose.yaml build
           docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm backend /bin/sh -c "python manage.py test -v3 --noinput"
 
-      - name: Push Docker image to Docker Hub
-        runs-on: ubuntu-latest
-        steps:
-          - name: Check out the repo
-            uses: actions/checkout@v4
-          - name: Log in to Docker Hub
-            uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-            with:
-              username: ${{ secrets.DOCKER_USERNAME }}
-              password: ${{ secrets.DOCKER_PASSWORD }}
+  push_to_registry:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
 
-          - name: Extract metadata (tags, labels) for Docker
-            id: meta
-            uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-            with:
-              images: stevinel/tilda-helper
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-          - name: Build and push Docker image
-            uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
-            with:
-              context: .
-              file: ./backend/Dockerfile
-              push: true
-              tags: ${{ steps.meta.outputs.tags }}
-              labels: ${{ steps.meta.outputs.labels }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: stevinel/tilda-helper
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
   deploy:
     needs: build-push-and-test
