@@ -1,15 +1,17 @@
 import os
+
 from functools import wraps
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
-from .main import TARGET_CHAT_ID, BOT
+from .main import BOT, TARGET_CHAT_ID
+
 
 app = FastAPI()
 
-API_NAME = os.getenv("API_NAME")
-API_KEY = os.getenv("API_KEY")
+API_NAME = os.getenv('API_NAME')
+API_KEY = os.getenv('API_KEY')
 
 
 def access_verification(view_func):
@@ -18,26 +20,26 @@ def access_verification(view_func):
     @wraps(view_func)
     def _wrapped_view(data):
         if API_NAME not in data or data[API_NAME] != API_KEY:
-            return JSONResponse({"error": "Access denied"})
+            return JSONResponse({'error': 'Access denied'})
 
         return view_func(data)
 
     return _wrapped_view
 
 
-@app.post("/notification/send_error/")
+@app.post('/notification/send_error/')
 @access_verification
 def send_error(data: dict):
     """Отправка ошибок в закрытую группу ТГ"""
 
-    BOT.send_message(TARGET_CHAT_ID, data["message"])
-    return JSONResponse({"success": True})
+    BOT.send_message(TARGET_CHAT_ID, data['message'])
+    return JSONResponse({'success': True})
 
 
-@app.post("/notification/send_message/")
+@app.post('/notification/send_message/')
 @access_verification
 def send_message(data: dict):
     """Отправка успешных сообщений в закрытую группу ТГ"""
 
-    BOT.send_message(TARGET_CHAT_ID, data["message"])
-    return JSONResponse({"success": True})
+    BOT.send_message(TARGET_CHAT_ID, data['message'])
+    return JSONResponse({'success': True})

@@ -1,28 +1,14 @@
-import base64
-import re
-from smtplib import SMTPException
-from unittest.mock import MagicMock, patch
-
-from apps.customers.models import Customer
-from apps.mail_senders.tasks import send_mail, send_many_mails
-from apps.products.models import Pattern
-from django.conf import settings
-from django.core.files.base import ContentFile
-from django.test import TestCase, override_settings
-
 from .models import MailSender
+
+from django.test import TestCase
 
 
 class MailSenderModelTests(TestCase):
-
     @classmethod
     def setUpTestData(cls):
         """Создаём объект MailSender"""
 
-        cls.mail_sender = MailSender.objects.create(
-            subject='Test Subject',
-            content='Test content.'
-        )
+        cls.mail_sender = MailSender.objects.create(subject='Test Subject', content='Test content.')
 
     def test_create_mail_sender(self):
         """Тест проверяет, что объект MailSender был создан"""

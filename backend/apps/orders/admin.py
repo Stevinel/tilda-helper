@@ -1,20 +1,20 @@
 from datetime import timedelta
 
+from .models import Order
+
 from django import forms
 from django.contrib import admin
-from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.db.models import Sum
 from django.utils.timezone import now
-
-from .models import Order
+from django.contrib.admin.widgets import FilteredSelectMultiple
 
 
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = "__all__"
+        fields = '__all__'
         widgets = {
-            "products": FilteredSelectMultiple("выкройки", is_stacked=False),
+            'products': FilteredSelectMultiple('выкройки', is_stacked=False),
         }
 
 
@@ -22,21 +22,21 @@ class OrderForm(forms.ModelForm):
 class OrderAdmin(admin.ModelAdmin):
     form = OrderForm
     list_display = (
-        "number",
-        "payment_amount",
-        "customer",
-        "created_at",
+        'number',
+        'payment_amount',
+        'customer',
+        'created_at',
     )
     search_fields = (
-        "number",
-        "payment_amount",
-        "customer__phone_number",
-        "products__article",
-        "products__name",
+        'number',
+        'payment_amount',
+        'customer__phone_number',
+        'products__article',
+        'products__name',
     )
-    list_filter = ("payment_amount", "products")
-    empty_value_display = "-пусто-"
-    autocomplete_fields = ["customer"]
+    list_filter = ('payment_amount', 'products')
+    empty_value_display = '-пусто-'
+    autocomplete_fields = ['customer']
 
     change_list_template = 'custom_change_list.html'
 
@@ -48,28 +48,20 @@ class OrderAdmin(admin.ModelAdmin):
 
         # Статистика за сегодня
         today_stats = {
-            'total': Order.objects.filter(
-                created_at__gte=today,
-                created_at__lt=tomorrow).count(),
-            'sum':
-                Order.objects.filter(
-                    created_at__gte=today,
-                    created_at__lt=tomorrow)
-                .aggregate(
-                    sum=Sum('payment_amount'))['sum'] or 0
+            'total': Order.objects.filter(created_at__gte=today, created_at__lt=tomorrow).count(),
+            'sum': Order.objects.filter(created_at__gte=today, created_at__lt=tomorrow).aggregate(
+                sum=Sum('payment_amount')
+            )['sum']
+            or 0,
         }
 
         # Статистика за вчера
         yesterday_stats = {
-            'total': Order.objects.filter(
-                created_at__gte=yesterday,
-                created_at__lt=today).count(),
-            'sum':
-                Order.objects.filter(
-                    created_at__gte=yesterday,
-                    created_at__lt=today)
-                .aggregate(
-                    sum=Sum('payment_amount'))['sum'] or 0
+            'total': Order.objects.filter(created_at__gte=yesterday, created_at__lt=today).count(),
+            'sum': Order.objects.filter(created_at__gte=yesterday, created_at__lt=today).aggregate(
+                sum=Sum('payment_amount')
+            )['sum']
+            or 0,
         }
 
         extra_context = extra_context or {}

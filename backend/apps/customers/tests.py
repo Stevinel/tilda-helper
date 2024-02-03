@@ -1,20 +1,20 @@
-from django.core.exceptions import ValidationError
-from django.db import IntegrityError
-from django.test import TestCase
 from .models import Customer
 
-class CustomerModelTests(TestCase):
+from django.db import IntegrityError
+from django.test import TestCase
 
+
+class CustomerModelTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         """Установка тестовых данных для всех методов"""
 
         cls.customer = Customer.objects.create(
-            email="customer@example.com",
-            first_name="Иван",
-            last_name="Иванов",
-            patronymic_name="Иванович",
-            phone_number="1234567890"
+            email='customer@example.com',
+            first_name='Иван',
+            last_name='Иванов',
+            patronymic_name='Иванович',
+            phone_number='1234567890',
         )
 
     def test_customer_creation(self):
@@ -32,10 +32,10 @@ class CustomerModelTests(TestCase):
 
         with self.assertRaises(IntegrityError):
             Customer.objects.create(
-                email="customer@example.com",  # Такой же email, как у существующего пользователя
-                first_name="Анна",
-                last_name="Каренина",
-                phone_number="0987654321"
+                email='customer@example.com',  # Такой же email, как у существующего пользователя
+                first_name='Анна',
+                last_name='Каренина',
+                phone_number='0987654321',
             )
 
     def test_is_receive_mails_default(self):
@@ -47,7 +47,6 @@ class CustomerModelTests(TestCase):
     def test_sum_old_orders_blank(self):
         """Тест на возможность оставить sum_old_orders пустым"""
 
-        new_customer = Customer(email="newcustomer@example.com")
+        new_customer = Customer(email='newcustomer@example.com')
         new_customer.full_clean()  # Не должно вызвать исключение
         self.assertIsNone(new_customer.sum_old_orders)
-

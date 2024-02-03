@@ -2,13 +2,15 @@ import os
 import re
 
 import requests
+
 from sentry_sdk import capture_message
 
 from apps.customers.models import Customer
 
-API_NAME = os.getenv("API_NAME")
-API_KEY = os.getenv("API_KEY")
-TG_BOT_URL = "http://tgbot:5555"
+
+API_NAME = os.getenv('API_NAME')
+API_KEY = os.getenv('API_KEY')
+TG_BOT_URL = 'http://tgbot:5555'
 
 
 class MessageSender:
@@ -17,20 +19,20 @@ class MessageSender:
     def send_success_message(self, message: str):
         """Отправка успешных сообщений в тг"""
 
-        tg_data = {API_NAME: API_KEY, "message": message}
-        response = requests.post(f"{TG_BOT_URL}/notification/send_message/", json=tg_data)
+        tg_data = {API_NAME: API_KEY, 'message': message}
+        response = requests.post(f'{TG_BOT_URL}/notification/send_message/', json=tg_data)
 
         if response.status_code != 200:
-            return capture_message("Не удалось отправить сообщение в телеграм")
+            return capture_message('Не удалось отправить сообщение в телеграм')
 
     def send_error_message(self, message: str):
         """Отправка сообщений об ошибке в тг"""
 
-        tg_data = {API_NAME: API_KEY, "message": message}
-        response = requests.post(f"{TG_BOT_URL}/notification/send_error/", json=tg_data)
+        tg_data = {API_NAME: API_KEY, 'message': message}
+        response = requests.post(f'{TG_BOT_URL}/notification/send_error/', json=tg_data)
 
         if response.status_code != 200:
-            return capture_message("Не удалось отправить сообщение об ошибке в телеграм")
+            return capture_message('Не удалось отправить сообщение об ошибке в телеграм')
 
 
 class Formatter:
@@ -41,19 +43,19 @@ class Formatter:
         """Приведение номера телефона к нужному формату"""
 
         if not phone:
-            return "+7 (666) 666-66-66"
+            return '+7 (666) 666-66-66'
 
         digits = re.sub(r'\D', '', phone)
 
         # Проверяем начало номера и длину
         if len(digits) == 11 and (digits.startswith('7') or digits.startswith('8')):
             # Используем срез для форматирования, отбрасывая первую цифру
-            return "+7 ({}) {}-{}-{}".format(digits[1:4], digits[4:7], digits[7:9], digits[9:11])
+            return '+7 ({}) {}-{}-{}'.format(digits[1:4], digits[4:7], digits[7:9], digits[9:11])
         elif len(digits) == 10:
             # Если номер уже без ведущей 7 или 8
-            return "+7 ({}) {}-{}-{}".format(digits[0:3], digits[3:6], digits[6:8], digits[8:10])
+            return '+7 ({}) {}-{}-{}'.format(digits[0:3], digits[3:6], digits[6:8], digits[8:10])
         elif phone == 'yes':
-            return "+7 (666) 666-66-66"
+            return '+7 (666) 666-66-66'
         else:
             return phone
 
@@ -61,8 +63,8 @@ class Formatter:
     def format_email(email: str) -> str:
         """Приведение почты к нужному формату"""
 
-        if email.endswith("gmail.ru"):
-            email = email.replace("gmail.ru", "gmail.com")
+        if email.endswith('gmail.ru'):
+            email = email.replace('gmail.ru', 'gmail.com')
         return email
 
     @staticmethod
@@ -71,9 +73,9 @@ class Formatter:
 
         full_name = name.split()
 
-        last_name = full_name[0] if len(full_name) >= 1 else ""
-        first_name = full_name[1] if len(full_name) >= 2 else ""
-        patronymic_name = full_name[2] if len(full_name) == 3 else ""
+        last_name = full_name[0] if len(full_name) >= 1 else ''
+        first_name = full_name[1] if len(full_name) >= 2 else ''
+        patronymic_name = full_name[2] if len(full_name) == 3 else ''
         return last_name, first_name, patronymic_name
 
     @staticmethod
@@ -81,28 +83,28 @@ class Formatter:
         """Приведение суммы платежа к нужному формату"""
 
         if isinstance(payment, dict):
-            payment_amount = payment["payment"]["amount"].replace(',', '.')
+            payment_amount = payment['payment']['amount'].replace(',', '.')
         else:
             payment_amount = payment.replace(',', '.')
         return int(float(payment_amount))
 
     @staticmethod
     def create_customer_dict(
-            first_name: str | None,
-            last_name: str | None,
-            patronymic_name: str | None,
-            email: str | None,
-            phone_number: str | None
+        first_name: str | None,
+        last_name: str | None,
+        patronymic_name: str | None,
+        email: str | None,
+        phone_number: str | None,
     ) -> dict:
         """Формирование словаря с данными клиента"""
 
         return {
-            "customer": {
-                "first_name": first_name,
-                "last_name": last_name,
-                "patronymic_name": patronymic_name,
-                "email": email,
-                "phone_number": phone_number,
+            'customer': {
+                'first_name': first_name,
+                'last_name': last_name,
+                'patronymic_name': patronymic_name,
+                'email': email,
+                'phone_number': phone_number,
             }
         }
 
@@ -111,9 +113,9 @@ class Formatter:
         """Формирование словаря с данными заказа"""
 
         return {
-            "order": {
-                "order_number": order_number,
-                "payment_amount": payment_amount,
+            'order': {
+                'order_number': order_number,
+                'payment_amount': payment_amount,
             }
         }
 
@@ -121,23 +123,23 @@ class Formatter:
     def create_products_dict(products_data: dict | list, default_quantity=1) -> dict:
         """Формирование словаря с данными товаров"""
 
-        products = {"products": []}
+        products = {'products': []}
         for product_data in products_data:
             if isinstance(product_data, dict):
                 product = {
-                    "article": product_data["sku"],
-                    "quantity": product_data.get("quantity", default_quantity),
+                    'article': product_data['sku'],
+                    'quantity': product_data.get('quantity', default_quantity),
                 }
             else:
                 product = {
-                    "article": product_data,
-                    "quantity": default_quantity,
+                    'article': product_data,
+                    'quantity': default_quantity,
                 }
-            products["products"].append(product)
+            products['products'].append(product)
         return products
 
     @staticmethod
     def get_full_name_by_parts(client: Customer) -> tuple:
         """Получение ФИО по частям"""
 
-        return " ".join([client.last_name, client.first_name, client.patronymic_name]).rstrip()
+        return ' '.join([client.last_name, client.first_name, client.patronymic_name]).rstrip()

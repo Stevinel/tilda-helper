@@ -6,6 +6,36 @@ on:
       - main
       - develop
 
+env:
+  DB_PASS: ${{ secrets.DB_PASS }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  DB_HOST: ${{ secrets.DB_HOST }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  DEBUG: ${{ secrets.DEBUG }}
+  DOMAIN: ${{ secrets.DOMAIN }}
+  DNS: ${{ secrets.DNS }}
+  CSRF_TRUSTED_DOMAINS: ${{ secrets.CSRF_TRUSTED_DOMAINS }}
+  ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+  CORS_ORIGIN_WHITELIST: ${{ secrets.CORS_ORIGIN_WHITELIST }}
+  TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+  TARGET_CHAT_ID: ${{ secrets.TARGET_CHAT_ID }}
+  ALLOWED_CHATS: ${{ secrets.ALLOWED_CHATS }}
+  API_NAME: ${{ secrets.API_NAME }}
+  API_KEY: ${{ secrets.API_KEY }}
+  ADMIN_URL: ${{ secrets.ADMIN_URL }}
+  EMAIL: ${{ secrets.EMAIL }}
+  EMAIL_TOKEN: ${{ secrets.EMAIL_TOKEN }}
+  CELERY_BROKER: ${{ secrets.CELERY_BROKER }}
+  SENTRY_DNS: ${{ secrets.SENTRY_DNS }}
+  CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}
+  FLOWER_USER: ${{ secrets.FLOWER_USER }}
+  FLOWER_PASS: ${{ secrets.FLOWER_PASS }}
+  FLOWER_URL_PREFIX: ${{ secrets.FLOWER_URL_PREFIX }}
+  ENV_VARS: ${{ secrets.ENV_VARS }}
+  PROJECT_PATH : ${{ secrets.PROJECT_PATH }}
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -22,6 +52,15 @@ jobs:
         run: |
           docker-compose -f docker-compose.yaml build
           docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run --rm backend /bin/sh -c "python manage.py test -v3 --noinput"
+
+    ruff:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+        - uses: chartboost/ruff-action@v1
+          with:
+            version: 0.2.0
+            args: [ --config, backend/ruff.toml ]
 
   deploy:
     needs: build-and-test

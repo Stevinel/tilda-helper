@@ -1,0 +1,27 @@
+# https://pre-commit.com/
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        files: backend/.*(\.py|\.html)$
+      - id: end-of-file-fixer
+        files: backend/.*(\.py|\.html)$
+      - id: debug-statements
+        files: backend/.*(\.py|\.html)$
+      - id: mixed-line-ending
+        args: [ '--fix=lf' ]
+        description: Forces to replace line ending by the UNIX 'lf' character.
+        files: backend/.*(\.py|\.html)$
+      - id: check-merge-conflict
+        files: backend/.*(\.py|\.html)$
+      - id: check-ast
+        files: backend/.*(\.py|\.html)$
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.2.0
+    hooks:
+      - id: ruff
+        args: [ --config, backend/ruff.toml, --fix ]
+      - id: ruff-format
+        args: [ --config, backend/ruff.toml ]
