@@ -90,7 +90,7 @@ def get_containers_status(message: telebot.types.Message) -> telebot.types.Messa
         for container in container_statuses:
             msg += f"Контейнер: {container['name']} - {container['status']}\n"
     if msg:
-        msg += f'\n Запущено {len(container_statuses)} из 8'
+        msg += f'\n Запущено {len(container_statuses)} из 9'
         BOT.reply_to(message, msg)
     else:
         BOT.reply_to(message, 'Не удалось получить статусы контейнеров')
