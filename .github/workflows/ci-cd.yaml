@@ -82,6 +82,7 @@ jobs:
               git pull origin test
             else
               git pull origin main
+            fi
             docker compose up -d --build
             sleep 15
             docker system prune -fa
