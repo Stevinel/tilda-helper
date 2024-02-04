@@ -16,7 +16,7 @@ env:
   DEBUG: ${{ secrets.DEBUG }}
   DOMAIN: ${{ secrets.DOMAIN }}
   DNS: ${{ secrets.DNS }}
-  CSRF_TRUSTED_DOMAINS: ${{ secrets.CSRF_TRUSTED_DOMAINS }}
+  CSRF_TRUSTED_ORIGINS: ${{ secrets.CSRF_TRUSTED_ORIGINS }}
   ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
   CORS_ORIGIN_WHITELIST: ${{ secrets.CORS_ORIGIN_WHITELIST }}
   TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}

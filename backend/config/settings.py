@@ -20,6 +20,7 @@ DEBUG = os.environ.get('DEBUG', False) == 'True'
 
 ALLOWED_HOSTS = [x.strip() for x in os.getenv('ALLOWED_HOSTS').split(',')]
 CORS_ORIGIN_WHITELIST = [x.strip() for x in os.getenv('ALLOWED_HOSTS').split(',')]
+CSRF_TRUSTED_ORIGINS = [x.strip() for x in os.getenv('CSRF_TRUSTED_ORIGINS').split(',')]
 
 # Application definition
 INSTALLED_APPS = [
