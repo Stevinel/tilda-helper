@@ -75,11 +75,13 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
+          env:
+            ENVIRONMENT_NAME: ${{ (github.ref == 'refs/heads/develop') && 'test' || 'main' }}
           script: |
             cd ${{ secrets.PROJECT_PATH }}
             echo "${{ secrets.ENV_VARS }}" | tr ';' '\n' > .env
-            if [ "${{ secrets.DEBUG }}" = "True" ]; then
-              git pull origin test
+            if [ "$ENVIRONMENT_NAME" = "test" ]; then
+              git pull origin develop
             else
               git pull origin main
             fi
