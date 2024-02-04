@@ -91,8 +91,8 @@ services:
     restart: always
 
 
-  celery:
-    container_name: celery
+  celery_send_mails:
+    container_name: celery_send_mails
     build: ./backend
     user: nobody
     depends_on:
@@ -104,7 +104,23 @@ services:
       - static_value:/usr/src/app/static/
       - media_value:/usr/src/app/media/
     <<: *default-environment
-    command: celery -A config worker -l error -E -c 2
+    command: celery -A config worker -l error -E -c 2 -Q send_mail
+
+
+  celery_send_many_mails:
+    container_name: celery_send_many_mails
+    build: ./backend
+    user: nobody
+    depends_on:
+      - backend
+      - redis
+    restart: always
+    volumes:
+      - ./backend:/usr/src/app
+      - static_value:/usr/src/app/static/
+      - media_value:/usr/src/app/media/
+    <<: *default-environment
+    command: celery -A config worker -l error -E -c 2 -Q send_many_mails
 
 
   flower:
@@ -119,7 +135,7 @@ services:
       - 6666
     depends_on:
       - redis
-      - celery
+      - celery_send_mails
     restart: always
 
 

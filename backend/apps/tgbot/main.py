@@ -28,7 +28,17 @@ ALLOWED_CHATS = [x.strip() for x in os.getenv('ALLOWED_CHATS').split(',')]
 
 BOT = telebot.TeleBot(TELEGRAM_TOKEN)
 CONTAINERS = {
-    'name': ['tgbot', 'celery', 'nginx', 'backend', 'postgres', 'redis', 'backup', 'flower']
+    'name': [
+        'tgbot',
+        'celery_send_mails',
+        'celery_send_many_mails',
+        'nginx',
+        'backend',
+        'postgres',
+        'redis',
+        'backup',
+        'flower',
+    ]
 }
 
 

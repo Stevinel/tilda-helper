@@ -26,7 +26,11 @@ API_KEY = os.getenv('API_KEY')
 
 
 @shared_task(
-    bind=True, autoretry_for=(Exception,), retry_backoff=5, retry_kwargs={'max_retries': 5}
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_backoff=5,
+    retry_kwargs={'max_retries': 5},
+    queue='send_mail',
 )
 def send_mail(self, data: dict):
     """Отправка писем с товарами из заказа"""
@@ -84,6 +88,7 @@ def send_mail(self, data: dict):
     retry_backoff_max=3600,
     retry_kwargs={'max_retries': 5},
     rate_limit='20/m',
+    queue='send_many_mails',
 )
 def send_many_mails(self, data: dict):
     """Массовая рассылка клиентам"""
