@@ -80,4 +80,5 @@ jobs:
             echo "${{ secrets.ENV_VARS }}" | tr ';' '\n' > .env
             git pull
             docker compose up -d --build
+            sleep 15
             docker system prune -fa
