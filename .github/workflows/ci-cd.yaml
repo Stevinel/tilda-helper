@@ -78,7 +78,10 @@ jobs:
           script: |
             cd ${{ secrets.PROJECT_PATH }}
             echo "${{ secrets.ENV_VARS }}" | tr ';' '\n' > .env
-            git pull
+            if [ "${{ secrets.DEBUG }}" = "True" ]; then
+              git pull origin test
+            else
+              git pull origin main
             docker compose up -d --build
             sleep 15
             docker system prune -fa
