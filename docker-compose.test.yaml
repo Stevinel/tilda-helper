@@ -28,8 +28,10 @@ services:
     depends_on:
       - postgres
       - redis
+    volumes:
+      - ./media_test:/usr/src/app/media/
 
-  celery:
+  celery_send_mails:
     build: ./backend
     restart: unless-stopped
     command: celery -A config worker -l error -E -c 2
@@ -37,6 +39,21 @@ services:
     depends_on:
       - backend
       - redis
+    volumes:
+      - ./media_test:/usr/src/app/media/
+
+  celery_send_many_mails:
+    build: ./backend
+    restart: unless-stopped
+    command: celery -A config worker -l error -E -c 2
+    <<: *backend_environment
+    depends_on:
+      - backend
+      - redis
+    volumes:
+      - ./media_test:/usr/src/app/media/
 
   nginx:
     restart: unless-stopped
+    volumes:
+      - ./media_test:/usr/src/app/media/
