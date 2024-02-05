@@ -29,7 +29,7 @@ services:
       - postgres
       - redis
     volumes:
-      - ./media_test:/usr/src/app/media/
+      - ./test_media:/usr/src/app/media
 
   celery_send_mails:
     build: ./backend
@@ -40,7 +40,7 @@ services:
       - backend
       - redis
     volumes:
-      - ./media_test:/usr/src/app/media/
+      - ./test_media:/usr/src/app/media
 
   celery_send_many_mails:
     build: ./backend
@@ -51,9 +51,14 @@ services:
       - backend
       - redis
     volumes:
-      - ./media_test:/usr/src/app/media/
+      - ./test_media:/usr/src/app/media
 
   nginx:
     restart: unless-stopped
     volumes:
-      - ./media_test:/usr/src/app/media/
+      - ./test_media:/usr/src/app/media
+
+  tgbot:
+    restart: unless-stopped
+    volumes:
+      - ./test_media:/usr/src/app/media
