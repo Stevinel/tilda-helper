@@ -75,6 +75,7 @@ services:
       - ./backend:/usr/src/app
       - static_value:/usr/src/app/static/
       - media_value:/usr/src/app/media/
+      - ./media:/usr/src/app/media/
       - /var/run/docker.sock:/var/run/docker.sock
     <<: *default-environment
     depends_on:
@@ -103,6 +104,7 @@ services:
       - ./backend:/usr/src/app
       - static_value:/usr/src/app/static/
       - media_value:/usr/src/app/media/
+      - ./media:/usr/src/app/media/
     <<: *default-environment
     command: celery -A config worker -l error -E -c 2 -Q send_mail
 
@@ -119,6 +121,7 @@ services:
       - ./backend:/usr/src/app
       - static_value:/usr/src/app/static/
       - media_value:/usr/src/app/media/
+      - ./media:/usr/src/app/media/
     <<: *default-environment
     command: celery -A config worker -l error -E -c 2 -Q send_many_mails
 
@@ -147,6 +150,7 @@ services:
       - ./backend:/usr/src/app
       - static_value:/usr/src/app/static/
       - media_value:/usr/src/app/media/
+      - ./media:/usr/src/app/media/
       - /var/run/docker.sock:/var/run/docker.sock
     <<: *default-environment
     depends_on:
@@ -171,6 +175,7 @@ services:
     volumes:
       - static_value:/usr/src/app/static
       - media_value:/usr/src/app/media
+      - ./media:/usr/src/app/media/
 
 
 volumes:
