@@ -218,6 +218,7 @@ services:
     networks:
       - web
 
+
   grafana:
     image: grafana/grafana
     container_name: grafana
@@ -234,6 +235,16 @@ services:
       - grafana_data:/var/lib/grafana
     networks:
       - web
+
+
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - /var/log/journal:/var/log/journal:ro
+      - /etc/machine-id:/etc/machine-id:ro
+    command: -config.file=./promtail/promtail.yaml
+    depends_on:
+      - loki
 
 
 volumes:
