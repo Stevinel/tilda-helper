@@ -193,9 +193,6 @@ services:
   loki:
     image: grafana/loki:latest
     restart: always
-    volumes:
-      - ./loki:/loki
-      - ./loki/rules:/loki/rules
     ports:
       - "3100:3100"
     networks:
@@ -218,7 +215,6 @@ services:
 volumes:
   postgresql-data:
   grafana_data:
-  loki-rules:
 
 networks:
   monitoring:
