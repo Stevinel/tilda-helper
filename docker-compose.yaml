@@ -203,13 +203,15 @@ services:
     image: grafana/grafana
     container_name: grafana
     restart: always
-    ports:
-      - "3000:3000"
+    expose:
+      - 3000
     depends_on:
       - loki
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${FLOWER_PASS}
       - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,grafana-worldmap-panel,grafana-piechart-panel
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+      - GF_SERVER_ROOT_URL=https://${DNS}/grafana/
     volumes:
       - grafana_data:/var/lib/grafana
 
