@@ -47,6 +47,8 @@ services:
       - 127.0.0.1:15432:5432
     logging:
       driver: journald
+      options:
+        tag: postgres
     networks:
       - web
 
@@ -71,6 +73,8 @@ services:
       - BACKUP_KEEP_WEEKS=2
     logging:
       driver: journald
+      options:
+        tag: pgbackups
     networks:
       - web
 
@@ -91,6 +95,8 @@ services:
     command: sh -c /tmp/entrypoint.sh
     logging:
       driver: journald
+      options:
+        tag: backend
     networks:
       - web
 
@@ -103,6 +109,8 @@ services:
     restart: always
     logging:
       driver: journald
+      options:
+        tag: redis
     networks:
       - web
 
@@ -123,6 +131,8 @@ services:
     command: celery -A config worker -l error -E -c 2 -Q send_mail
     logging:
       driver: journald
+      options:
+        tag: celery_send_mails
     networks:
       - web
 
@@ -143,6 +153,8 @@ services:
     command: celery -A config worker -l error -E -c 2 -Q send_many_mails
     logging:
       driver: journald
+      options:
+        tag: celery_send_many_mails
     networks:
       - web
 
@@ -163,6 +175,8 @@ services:
     restart: always
     logging:
       driver: journald
+      options:
+        tag: flower
     networks:
       - web
 
@@ -185,6 +199,8 @@ services:
       - "5555:5555"
     logging:
       driver: journald
+      options:
+        tag: tgbot
     networks:
       - web
 
@@ -205,6 +221,8 @@ services:
       - ./media:/usr/src/app/media/
     logging:
       driver: journald
+      options:
+        tag: nginx
     networks:
       - web
 
