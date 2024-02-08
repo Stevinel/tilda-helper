@@ -204,7 +204,6 @@ services:
       - loki
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${FLOWER_PASS}
-      GF_SERVER_ROOT_URL: "${DNS}/grafana"
     volumes:
       - grafana_data:/var/lib/grafana
 
