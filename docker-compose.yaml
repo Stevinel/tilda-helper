@@ -190,16 +190,20 @@ services:
     logging:
       driver: journald
 
+
   loki:
     image: grafana/loki:latest
+    container_name: loki
     restart: always
     ports:
       - "3100:3100"
     networks:
       - monitoring
 
+
   grafana:
     image: grafana/grafana
+    container_name: grafana
     restart: always
     expose:
       - 3000
@@ -212,9 +216,11 @@ services:
     networks:
       - monitoring
 
+
 volumes:
   postgresql-data:
   grafana_data:
+
 
 networks:
   monitoring:
