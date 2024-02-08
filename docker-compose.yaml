@@ -45,8 +45,8 @@ services:
       retries: 5
     ports:
       - 127.0.0.1:15432:5432
-#    logging:
-#      driver: journald
+    logging:
+      driver: journald
 
 
   pgbackups:
@@ -67,8 +67,8 @@ services:
       - POSTGRES_EXTRA_OPTS=-Z9 -E UTF-8 --schema=public --blobs
       - SCHEDULE=@weekly
       - BACKUP_KEEP_WEEKS=2
-#    logging:
-#      driver: journald
+    logging:
+      driver: journald
 
 
   backend:
@@ -85,8 +85,8 @@ services:
       postgres:
         condition: service_healthy
     command: sh -c /tmp/entrypoint.sh
-#    logging:
-#      driver: journald
+    logging:
+      driver: journald
 
 
   redis:
@@ -95,8 +95,8 @@ services:
     depends_on:
       - postgres
     restart: always
-#    logging:
-#      driver: journald
+    logging:
+      driver: journald
 
 
   celery_send_mails:
@@ -113,8 +113,8 @@ services:
       - ./media:/usr/src/app/media/
     <<: *default-environment
     command: celery -A config worker -l error -E -c 2 -Q send_mail
-#    logging:
-#      driver: journald
+    logging:
+      driver: journald
 
 
   celery_send_many_mails:
@@ -131,8 +131,8 @@ services:
       - ./media:/usr/src/app/media/
     <<: *default-environment
     command: celery -A config worker -l error -E -c 2 -Q send_many_mails
-#    logging:
-#      driver: journald
+    logging:
+      driver: journald
 
 
   flower:
@@ -149,8 +149,8 @@ services:
       - redis
       - celery_send_mails
     restart: always
-#    logging:
-#      driver: journald
+    logging:
+      driver: journald
 
 
   tgbot:
@@ -169,8 +169,8 @@ services:
     command: sh -c 'uvicorn apps.tgbot.fastapp:app --host 0.0.0.0 --port 5555 & python -m apps.tgbot.main'
     ports:
       - "5555:5555"
-#    logging:
-#      driver: journald
+    logging:
+      driver: journald
 
 
   nginx:
@@ -187,8 +187,8 @@ services:
     volumes:
       - ./static:/usr/src/app/static/
       - ./media:/usr/src/app/media/
-#    logging:
-#      driver: journald
+    logging:
+      driver: journald
 
 
   loki:
