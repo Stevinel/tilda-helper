@@ -239,12 +239,17 @@ services:
 
   promtail:
     image: grafana/promtail:latest
+    build: ./promtail
     volumes:
       - /var/log/journal:/var/log/journal:ro
       - /etc/machine-id:/etc/machine-id:ro
-    command: -config.file=./promtail/promtail.yaml
+    command:
+      - '-config.file=/promtail.yml'
+      - '-config.expand-env=true'
     depends_on:
       - loki
+    networks:
+      - web
 
 
 volumes:
