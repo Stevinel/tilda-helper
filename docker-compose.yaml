@@ -193,8 +193,12 @@ services:
   loki:
     image: grafana/loki:latest
     restart: always
+    volumes:
+      - ./loki:/loki
     ports:
       - "3100:3100"
+    networks:
+      - monitoring
 
   grafana:
     image: grafana/grafana
@@ -207,6 +211,8 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${FLOWER_PASS}
     volumes:
       - grafana_data:/var/lib/grafana
+    networks:
+      - monitoring
 
   promtail:
     build: ./promtail
@@ -222,3 +228,8 @@ services:
 volumes:
   postgresql-data:
   grafana_data:
+
+networks:
+  monitoring:
+    driver:
+      bridge
