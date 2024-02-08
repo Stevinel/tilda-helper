@@ -40,6 +40,9 @@ Previously, the owner had to manually execute this entire workflow, a tedious pr
 - Flower
 - Sentry
 - Postgres
+- CI/CD
+- Grafana
+- Loki
 
 ## 🔧 Installation
 
