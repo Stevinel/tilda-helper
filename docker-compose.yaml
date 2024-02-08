@@ -198,12 +198,13 @@ services:
 
   grafana:
     image: grafana/grafana
-    ports:
-      - "3000:3000"
+    expose:
+      - 3000
     depends_on:
       - loki
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${FLOWER_PASS}
+      GF_SERVER_ROOT_URL: "${DNS}/grafana"
     volumes:
       - grafana_data:/var/lib/grafana
 
