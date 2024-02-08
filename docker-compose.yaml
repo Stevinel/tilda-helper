@@ -195,6 +195,7 @@ services:
     restart: always
     volumes:
       - ./loki:/loki
+      - ./loki/rules:/loki/rules
     ports:
       - "3100:3100"
     networks:
