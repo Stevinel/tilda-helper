@@ -218,6 +218,7 @@ services:
 volumes:
   postgresql-data:
   grafana_data:
+  loki-rules:
 
 networks:
   monitoring:
