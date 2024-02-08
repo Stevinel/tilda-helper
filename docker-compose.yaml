@@ -47,6 +47,8 @@ services:
       - 127.0.0.1:15432:5432
     logging:
       driver: journald
+    networks:
+      - web
 
 
   pgbackups:
@@ -69,6 +71,8 @@ services:
       - BACKUP_KEEP_WEEKS=2
     logging:
       driver: journald
+    networks:
+      - web
 
 
   backend:
@@ -87,6 +91,8 @@ services:
     command: sh -c /tmp/entrypoint.sh
     logging:
       driver: journald
+    networks:
+      - web
 
 
   redis:
@@ -97,6 +103,8 @@ services:
     restart: always
     logging:
       driver: journald
+    networks:
+      - web
 
 
   celery_send_mails:
@@ -115,6 +123,8 @@ services:
     command: celery -A config worker -l error -E -c 2 -Q send_mail
     logging:
       driver: journald
+    networks:
+      - web
 
 
   celery_send_many_mails:
@@ -133,6 +143,8 @@ services:
     command: celery -A config worker -l error -E -c 2 -Q send_many_mails
     logging:
       driver: journald
+    networks:
+      - web
 
 
   flower:
@@ -151,6 +163,8 @@ services:
     restart: always
     logging:
       driver: journald
+    networks:
+      - web
 
 
   tgbot:
@@ -171,6 +185,8 @@ services:
       - "5555:5555"
     logging:
       driver: journald
+    networks:
+      - web
 
 
   nginx:
@@ -189,6 +205,8 @@ services:
       - ./media:/usr/src/app/media/
     logging:
       driver: journald
+    networks:
+      - web
 
 
   loki:
@@ -197,7 +215,8 @@ services:
     restart: always
     ports:
       - "3100:3100"
-
+    networks:
+      - web
 
   grafana:
     image: grafana/grafana
@@ -209,13 +228,19 @@ services:
       - loki
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${FLOWER_PASS}
-      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource,grafana-worldmap-panel,grafana-piechart-panel
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
       - GF_SERVER_ROOT_URL=https://${DNS}/grafana/
     volumes:
       - grafana_data:/var/lib/grafana
+    networks:
+      - web
 
 
 volumes:
   postgresql-data:
   grafana_data:
+
+
+networks:
+  web:
+    driver: bridge
