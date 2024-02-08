@@ -79,6 +79,7 @@ jobs:
             cd ${{ secrets.PROJECT_PATH }}
             echo "${{ secrets.ENV_VARS }}" | tr ';' '\n' > .env
             if [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+              git reset --hard
               git pull origin develop
             else
               git pull origin main
