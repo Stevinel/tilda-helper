@@ -38,6 +38,9 @@ CONTAINERS = {
         'redis',
         'backup',
         'flower',
+        'grafana',
+        'promtail',
+        'loki',
     ]
 }
 
