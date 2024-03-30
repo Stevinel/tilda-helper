@@ -154,7 +154,7 @@ CELERY_TIMEZONE = 'Europe/Moscow'
 sentry_sdk.init(
     dsn=os.getenv('SENTRY_DNS'),
     traces_sample_rate=1.0,
-    profiles_sample_rate=1.0,
+    profiles_sample_rate=0.1,
     integrations=[DjangoIntegration()],
 )
 
