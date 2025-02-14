@@ -273,7 +273,7 @@ services:
 
 volumes:
   postgresql-data:
-  grafana_data:
+#  grafana_data:
 
 
 networks:
