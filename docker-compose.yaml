@@ -45,10 +45,10 @@ services:
       retries: 5
     ports:
       - 127.0.0.1:15432:5432
-    logging:
-      driver: journald
-      options:
-        tag: postgres
+#    logging:
+#      driver: journald
+#      options:
+#        tag: postgres
     networks:
       - web
 
@@ -71,10 +71,10 @@ services:
       - POSTGRES_EXTRA_OPTS=-Z9 -E UTF-8 --schema=public --blobs
       - SCHEDULE=@weekly
       - BACKUP_KEEP_WEEKS=2
-    logging:
-      driver: journald
-      options:
-        tag: pgbackups
+#    logging:
+#      driver: journald
+#      options:
+#        tag: pgbackups
     networks:
       - web
 
@@ -93,10 +93,10 @@ services:
       postgres:
         condition: service_healthy
     command: sh -c /tmp/entrypoint.sh
-    logging:
-      driver: journald
-      options:
-        tag: backend
+#    logging:
+#      driver: journald
+#      options:
+#        tag: backend
     networks:
       - web
 
@@ -107,10 +107,10 @@ services:
     depends_on:
       - postgres
     restart: always
-    logging:
-      driver: journald
-      options:
-        tag: redis
+#    logging:
+#      driver: journald
+#      options:
+#        tag: redis
     networks:
       - web
 
@@ -129,10 +129,10 @@ services:
       - ./media:/usr/src/app/media/
     <<: *default-environment
     command: celery -A config worker -l error -E -c 2 -Q send_mail
-    logging:
-      driver: journald
-      options:
-        tag: celery_send_mails
+#    logging:
+#      driver: journald
+#      options:
+#        tag: celery_send_mails
     networks:
       - web
 
@@ -151,34 +151,34 @@ services:
       - ./media:/usr/src/app/media/
     <<: *default-environment
     command: celery -A config worker -l error -E -c 2 -Q send_many_mails
-    logging:
-      driver: journald
-      options:
-        tag: celery_send_many_mails
+#    logging:
+#      driver: journald
+#      options:
+#        tag: celery_send_many_mails
     networks:
       - web
 
-
-  flower:
-    container_name: flower
-    build: ./backend
-    command: celery flower --basic_auth=${FLOWER_USER}:${FLOWER_PASS} --port=6666
-    environment:
-      - CELERY_BROKER_URL=${CELERY_BROKER}
-      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
-      - FLOWER_PORT=6666
-    expose:
-      - 6666
-    depends_on:
-      - redis
-      - celery_send_mails
-    restart: always
-    logging:
-      driver: journald
-      options:
-        tag: flower
-    networks:
-      - web
+#
+#  flower:
+#    container_name: flower
+#    build: ./backend
+#    command: celery flower --basic_auth=${FLOWER_USER}:${FLOWER_PASS} --port=6666
+#    environment:
+#      - CELERY_BROKER_URL=${CELERY_BROKER}
+#      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+#      - FLOWER_PORT=6666
+#    expose:
+#      - 6666
+#    depends_on:
+#      - redis
+#      - celery_send_mails
+#    restart: always
+#    logging:
+#      driver: journald
+#      options:
+#        tag: flower
+#    networks:
+#      - web
 
 
   tgbot:
@@ -197,10 +197,10 @@ services:
     command: sh -c 'uvicorn apps.tgbot.fastapp:app --host 0.0.0.0 --port 5555 & python -m apps.tgbot.main'
     ports:
       - "5555:5555"
-    logging:
-      driver: journald
-      options:
-        tag: tgbot
+#    logging:
+#      driver: journald
+#      options:
+#        tag: tgbot
     networks:
       - web
 
@@ -219,56 +219,56 @@ services:
     volumes:
       - ./static:/usr/src/app/static/
       - ./media:/usr/src/app/media/
-    logging:
-      driver: journald
-      options:
-        tag: nginx
+#    logging:
+#      driver: journald
+#      options:
+#        tag: nginx
     networks:
       - web
 
 
-  loki:
-    image: grafana/loki:latest
-    container_name: loki
-    restart: always
-    ports:
-      - "3100:3100"
-    networks:
-      - web
+#  loki:
+#    image: grafana/loki:latest
+#    container_name: loki
+#    restart: always
+#    ports:
+#      - "3100:3100"
+#    networks:
+#      - web
 
 
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    restart: always
-    expose:
-      - 3000
-    depends_on:
-      - loki
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${FLOWER_PASS}
-      - GF_SERVER_SERVE_FROM_SUB_PATH=true
-      - GF_SERVER_ROOT_URL=https://${DNS}/grafana/
-    volumes:
-      - grafana_data:/var/lib/grafana
-    networks:
-      - web
+#  grafana:
+#    image: grafana/grafana
+#    container_name: grafana
+#    restart: always
+#    expose:
+#      - 3000
+#    depends_on:
+#      - loki
+#    environment:
+#      - GF_SECURITY_ADMIN_PASSWORD=${FLOWER_PASS}
+#      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+#      - GF_SERVER_ROOT_URL=https://${DNS}/grafana/
+#    volumes:
+#      - grafana_data:/var/lib/grafana
+#    networks:
+#      - web
 
-
-  promtail:
-    image: grafana/promtail:latest
-    container_name: promtail
-    build: ./promtail
-    volumes:
-      - /var/log/journal:/var/log/journal:ro
-      - /etc/machine-id:/etc/machine-id:ro
-    command:
-      - '-config.file=/promtail.yml'
-      - '-config.expand-env=true'
-    depends_on:
-      - loki
-    networks:
-      - web
+#
+#  promtail:
+#    image: grafana/promtail:latest
+#    container_name: promtail
+#    build: ./promtail
+#    volumes:
+#      - /var/log/journal:/var/log/journal:ro
+#      - /etc/machine-id:/etc/machine-id:ro
+#    command:
+#      - '-config.file=/promtail.yml'
+#      - '-config.expand-env=true'
+#    depends_on:
+#      - loki
+#    networks:
+#      - web
 
 
 volumes:

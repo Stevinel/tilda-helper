@@ -37,10 +37,10 @@ CONTAINERS = {
         'postgres',
         'redis',
         'backup',
-        'flower',
-        'grafana',
-        'promtail',
-        'loki',
+        # 'flower',
+        # 'grafana',
+        # 'promtail',
+        # 'loki',
     ]
 }
 
