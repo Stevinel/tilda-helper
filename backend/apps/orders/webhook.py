@@ -4,6 +4,7 @@ import json
 from functools import wraps
 
 from sentry_sdk import capture_exception
+from config.settings import logger
 
 from apps.utils import MessageSender
 from apps.orders.manager import DataManager
@@ -26,6 +27,7 @@ def access_verification(view_func):
     @wraps(view_func)
     def _wrapped_view(self, request, *args, **kwargs):
         try:
+            logger.info('Получен запрос на вэбхук')
             data = json.loads(request.body.decode('unicode_escape'))
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON data'})

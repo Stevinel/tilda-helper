@@ -160,13 +160,13 @@ sentry_sdk.init(
 
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     filemode='w',
     format='%(asctime)s %(levelname)s %(message)s',
 )
 console = logging.StreamHandler()
 console.setLevel(logging.DEBUG)
-logging.getLogger('').addHandler(console)
+logger = logging.getLogger('').addHandler(console)
 
 
 warnings.filterwarnings(
