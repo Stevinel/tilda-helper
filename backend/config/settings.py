@@ -166,7 +166,9 @@ logging.basicConfig(
 )
 console = logging.StreamHandler()
 console.setLevel(logging.DEBUG)
-logger = logging.getLogger('').addHandler(console)
+
+logger = logging.getLogger(__name__)
+logger.addHandler(console)
 
 
 warnings.filterwarnings(
