@@ -73,7 +73,7 @@ class Formatter:
     def format_full_name(name: Optional[str]) -> tuple:
         """Приведение имени к нужному формату"""
         if not name:
-            return 'ПОЛЬЗОВАТЕЛЬ БЕЗ ФИО'
+            return 'ПОЛЬЗОВАТЕЛЬ', 'БЕЗ', 'ФИО'
 
         full_name = name.split()
 
