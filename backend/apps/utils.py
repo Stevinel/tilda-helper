@@ -1,6 +1,8 @@
 import os
 import re
 
+from typing import Optional
+
 import requests
 
 from sentry_sdk import capture_message
@@ -39,7 +41,7 @@ class Formatter:
     """Класс отвечающий за форматирование входящих данных"""
 
     @staticmethod
-    def format_phone(phone: str) -> str:
+    def format_phone(phone: Optional[str]) -> str:
         """Приведение номера телефона к нужному формату"""
 
         if not phone:
@@ -68,8 +70,10 @@ class Formatter:
         return email
 
     @staticmethod
-    def format_full_name(name: str) -> tuple:
+    def format_full_name(name: Optional[str]) -> tuple:
         """Приведение имени к нужному формату"""
+        if not name:
+            return 'ПОЛЬЗОВАТЕЛЬ БЕЗ ФИО'
 
         full_name = name.split()
 
@@ -79,8 +83,11 @@ class Formatter:
         return last_name, first_name, patronymic_name
 
     @staticmethod
-    def format_payment(payment: str) -> int:
+    def format_payment(payment: Optional[str]) -> int:
         """Приведение суммы платежа к нужному формату"""
+
+        if not payment:
+            return 666
 
         if isinstance(payment, dict):
             payment_amount = payment['payment']['amount'].replace(',', '.')
@@ -127,7 +134,7 @@ class Formatter:
         for product_data in products_data:
             if isinstance(product_data, dict):
                 product = {
-                    'article': product_data['sku'],
+                    'article': product_data.get('sku'),
                     'quantity': product_data.get('quantity', default_quantity),
                 }
             else:

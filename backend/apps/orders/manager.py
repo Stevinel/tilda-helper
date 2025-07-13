@@ -48,7 +48,7 @@ class DataManager(DataSender):
             self.send_order_data(order, customer, order_products)
         except (IntegrityError, OperationalError) as e:
             capture_exception(e)
-            message = f'Ошибка сохранения заказа: {order.number}'
+            message = f'Ошибка сохранения заказа: {order.number} ' f'Текст ошибки: {e}'
             MessageSender().send_error_message(message)
 
     def save_customer(self) -> Customer:
@@ -69,7 +69,7 @@ class DataManager(DataSender):
             )
         return customer
 
-    def save_order(self, customer: Customer) -> None:
+    def save_order(self, customer: Customer) -> Order:
         """Сохранение заказа в БД"""
 
         order = Order.objects.create(
