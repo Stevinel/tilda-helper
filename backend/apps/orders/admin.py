@@ -31,6 +31,7 @@ class OrderAdmin(admin.ModelAdmin):
         'number',
         'payment_amount',
         'customer__phone_number',
+        'customer__email',
         'products__article',
         'products__name',
     )
